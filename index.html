@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Agent - Brigade 8</title>
+    <!-- Liaison du Manifest pour la PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#030712">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Effet Glassmorphism */
@@ -219,6 +223,15 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // Enregistrement du Service Worker pour la PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then((reg) => console.log('Service Worker enregistré avec succès:', reg.scope))
+                    .catch((err) => console.log('Échec de l\'enregistrement du Service Worker:', err));
+            });
+        }
     </script>
 </body>
 </html>
