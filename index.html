@@ -19,6 +19,18 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         
+        /* Mode Alerte Rouge Dynamique */
+        body.red-alert-mode {
+            background-color: #180202 !important;
+        }
+        body.red-alert-mode .glass-panel {
+            background: rgba(40, 10, 10, 0.85);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+        body.red-alert-mode header {
+            border-bottom-color: rgba(239, 68, 68, 0.6);
+        }
+
         /* Animations */
         @keyframes pulse-red {
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
@@ -37,12 +49,11 @@
         }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10">
+<body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500">
 
     <!-- En-tête avec Logo Fichier local (icon8.png) -->
-    <header class="glass-panel sticky top-0 z-50 p-4 border-b border-gray-800 flex justify-between items-center">
+    <header class="glass-panel sticky top-0 z-50 p-4 border-b border-gray-800 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-4">
-            
             <!-- Logo Brigade 8 -->
             <div class="relative flex items-center justify-center w-12 h-12 bg-gray-900 border border-cyan-500/50 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.4)] overflow-hidden">
                 <img src="icon8.png" alt="Logo Brigade 8" class="w-full h-full object-cover">
@@ -50,15 +61,20 @@
             
             <!-- Titre et Statut -->
             <div class="flex items-center gap-3">
-                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></div>
-                <h1 class="text-xl font-bold tracking-widest text-cyan-400">
+                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]" id="status-dot"></div>
+                <h1 class="text-xl font-bold tracking-widest text-cyan-400" id="header-title">
                     BRIGADE 8 <span class="text-gray-500 text-sm hidden md:inline">| SYSTÈME D'ÉVALUATION</span>
                 </h1>
             </div>
         </div>
-        
-        <!-- Horloge -->
-        <div class="text-sm text-gray-300 font-mono bg-gray-900/80 px-3 py-1.5 rounded-md border border-gray-700 shadow-inner" id="clock"></div>
+
+        <!-- Contrôles du haut (Bouton Alerte & Horloge) -->
+        <div class="flex items-center gap-3">
+            <button onclick="toggleRedAlert()" id="alert-btn" class="bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md">
+                🚨 MODE ALERTE
+            </button>
+            <div class="text-sm text-gray-300 font-mono bg-gray-900/80 px-3 py-1.5 rounded-md border border-gray-700 shadow-inner" id="clock"></div>
+        </div>
     </header>
 
     <main class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
@@ -98,6 +114,25 @@
 
         <!-- Colonne Droite : Analyse & Métriques -->
         <div class="md:col-span-2 space-y-6">
+
+            <!-- Compte à rebours dynamique -->
+            <div class="glass-panel p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-cyan-900/50 p-2.5 rounded-lg text-cyan-400">
+                        <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="text-xs text-gray-400 font-mono uppercase">Temps restant avant rapport final</h4>
+                        <span class="text-cyan-400 font-bold text-sm">Échéance : 08/10/2026</span>
+                    </div>
+                </div>
+                <div id="countdown" class="flex gap-2 font-mono text-white text-sm">
+                    <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="days">00</span>j</div>
+                    <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="hours">00</span>h</div>
+                    <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="minutes">00</span>m</div>
+                    <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="seconds">00</span>s</div>
+                </div>
+            </div>
             
             <!-- Compétences Cognitives -->
             <div class="glass-panel p-6 rounded-2xl">
@@ -213,89 +248,151 @@
             </div>
         </div>
 
-        <!-- Effectif de la Brigade -->
+        <!-- Effectif de la Brigade avec Recherche interactive -->
         <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-cyan-500 relative overflow-hidden">
             <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ORGANIGRAMME</div>
             
-            <div class="flex items-start gap-4">
-                <div class="bg-cyan-900/50 p-3 rounded-lg text-cyan-400 mt-1">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                </div>
-                <div class="w-full">
-                    <h3 class="text-lg font-bold text-cyan-400 mb-1">EFFECTIF DE LA BRIGADE 8 - HIÉRARCHIE DES AGENTS</h3>
-                    <p class="text-gray-400 text-sm mb-4">Liste des membres opérationnels et niveaux d'habilitation de l'unité.</p>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                        
-                        <!-- Saber Aballagh -->
-                        <div class="bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center shadow-md">
-                            <div>
-                                <span class="block text-white font-bold">Saber Aballagh</span>
-                                <span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span>
-                            </div>
-                            <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-cyan-500/30">Niv. 16</span>
-                        </div>
-
-                        <!-- Anis Salmi -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Anis Salmi</span>
-                            <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
-                        </div>
-
-                        <!-- Chaimaa Benzakri -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Chaimaa Benzakri</span>
-                            <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
-                        </div>
-
-                        <!-- Soufiane Hadoui -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Soufiane Hadoui</span>
-                            <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
-                        </div>
-
-                        <!-- Akram Belfqih -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Akram Belfqih</span>
-                            <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
-                        </div>
-
-                        <!-- Ali Benchamssi -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Ali Benchamssi</span>
-                            <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
-                        </div>
-
-                        <!-- Wissal Asbahi -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Wissal Asbahi</span>
-                            <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 09</span>
-                        </div>
-
-                        <!-- Ahmed Sajid -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Ahmed Sajid</span>
-                            <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 08</span>
-                        </div>
-
-                        <!-- Karim Chakhsi -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Karim Chakhsi</span>
-                            <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 05</span>
-                        </div>
-
-                        <!-- Rayane Bourachdi -->
-                        <div class="bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-200 font-medium">Rayane Bourachdi</span>
-                            <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 04</span>
-                        </div>
-
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="bg-cyan-900/50 p-3 rounded-lg text-cyan-400">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-cyan-400">EFFECTIF DE LA BRIGADE 8 - HIÉRARCHIE DES AGENTS</h3>
+                        <p class="text-gray-400 text-sm">Cliquez sur un agent pour afficher sa fiche tactique et ses missions.</p>
                     </div>
                 </div>
+                <!-- Barre de recherche -->
+                <div class="w-full md:w-72">
+                    <input type="text" id="agent-search" placeholder="Rechercher un coéquipier..." onkeyup="filterAgents()" class="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="agents-grid">
+                
+                <!-- Saber Aballagh -->
+                <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8, validation des stratégies de cybersécurité et arbitrage des rapports de terrain.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center shadow-md cursor-pointer hover:bg-cyan-950/40 transition-all">
+                    <div>
+                        <span class="block text-white font-bold agent-name">Saber Aballagh</span>
+                        <span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span>
+                    </div>
+                    <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-cyan-500/30">Niv. 16</span>
+                </div>
+
+                <!-- Anis Salmi -->
+                <div onclick="openAgentModal('Anis Salmi', 'Opérateur Senior', 'Niveau 11', 'Analyse Réseau & Sécurité Périmétrique', 'Audit des passerelles réseau, traçage des intrusions et sécurisation des flux de données sensibles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Anis Salmi</span>
+                        <span class="text-xs text-gray-400">Opérateur Senior</span>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                </div>
+
+                <!-- Chaimaa Benzakri -->
+                <div onclick="openAgentModal('Chaimaa Benzakri', 'Analyste Cybersécurité', 'Niveau 11', 'Cryptographie & Ingénierie Inverse', 'Analyse de code malveillant, rétro-ingénierie (reverse engineering) des scripts suspects et cryptographie.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Chaimaa Benzakri</span>
+                        <span class="text-xs text-gray-400">Analyste Cybersécurité</span>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                </div>
+
+                <!-- Soufiane Hadoui -->
+                <div onclick="openAgentModal('Soufiane Hadoui', 'Expert Intervention Terrain', 'Niveau 11', 'Sécurité des Systèmes Embarqués', 'Intervention rapide sur site, sécurisation physique des terminaux et neutralisation des failles matérielles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Soufiane Hadoui</span>
+                        <span class="text-xs text-gray-400">Expert Intervention</span>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                </div>
+
+                <!-- Akram Belfqih -->
+                <div onclick="openAgentModal('Akram Belfqih', 'Agent Tactique', 'Niveau 10', 'Surveillance & Traitement de Flux', 'Surveillance active des pare-feu (Firewalls) et filtrage des paquets de données en temps réel.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Akram Belfqih</span>
+                        <span class="text-xs text-gray-400">Agent Tactique</span>
+                    </div>
+                    <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
+                </div>
+
+                <!-- Ali Benchamssi -->
+                <div onclick="openAgentModal('Ali Benchamssi', 'Agent Spécialisé', 'Niveau 10', 'Sécurité des Données & Sauvegardes', 'Gestion des protocoles de sauvegarde des bases de données et intégrité des archives de la brigade.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Ali Benchamssi</span>
+                        <span class="text-xs text-gray-400">Agent Spécialisé</span>
+                    </div>
+                    <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
+                </div>
+
+                <!-- Wissal Asbahi -->
+                <div onclick="openAgentModal('Wissal Asbahi', 'Analyste Junior', 'Niveau 09', 'Surveillance des Logs & Alertes', 'Analyse des journaux d’événements (Logs) et détection précoce des signaux faibles d’attaque.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Wissal Asbahi</span>
+                        <span class="text-xs text-gray-400">Analyste Junior</span>
+                    </div>
+                    <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 09</span>
+                </div>
+
+                <!-- Ahmed Sajid -->
+                <div onclick="openAgentModal('Ahmed Sajid', 'Agent Support', 'Niveau 08', 'Maintenance Technique & Hardware', 'Support technique des postes de travail, maintenance des équipements et déploiement logistique.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Ahmed Sajid</span>
+                        <span class="text-xs text-gray-400">Agent Support</span>
+                    </div>
+                    <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 08</span>
+                </div>
+
+                <!-- Karim Chakhsi -->
+                <div onclick="openAgentModal('Karim Chakhsi', 'Stagiaire Terrain', 'Niveau 05', 'Phase d\'Apprentissage & Renseignement', 'Apprentissage des procédures de contre-espionnage et assistance aux enquêtes d’ingénierie sociale.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Karim Chakhsi</span>
+                        <span class="text-xs text-gray-400">Stagiaire Terrain</span>
+                    </div>
+                    <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 05</span>
+                </div>
+
+                <!-- Rayane Bourachdi -->
+                <div onclick="openAgentModal('Rayane Bourachdi', 'Cadre en Formation', 'Niveau 04', 'Initiation aux Protocoles de Sécurité', 'Initiation aux bases de données de sécurité et simulation d’attaques contrôlées (Red Teaming de base).')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div>
+                        <span class="text-gray-200 font-medium agent-name">Rayane Bourachdi</span>
+                        <span class="text-xs text-gray-400">Cadre en Formation</span>
+                    </div>
+                    <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 04</span>
+                </div>
+
             </div>
         </div>
 
     </main>
+
+    <!-- Modal Fiche Agent -->
+    <div id="agent-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-cyan-500/50 relative shadow-2xl">
+            <button onclick="closeAgentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500 flex items-center justify-center text-cyan-400 font-bold">B8</div>
+                <div>
+                    <h3 id="modal-name" class="text-xl font-bold text-white">Nom Agent</h3>
+                    <p id="modal-role" class="text-xs text-cyan-400 font-mono">Rôle</p>
+                </div>
+            </div>
+            <div class="space-y-3 text-sm mb-6">
+                <div class="flex justify-between border-b border-gray-800 pb-2">
+                    <span class="text-gray-400">Niveau d'Habilitation</span>
+                    <span id="modal-level" class="text-white font-mono font-bold">Niveau</span>
+                </div>
+                <div class="flex justify-between border-b border-gray-800 pb-2">
+                    <span class="text-gray-400">Spécialisation</span>
+                    <span id="modal-spec" class="text-white text-right">Détails</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block mb-1 font-semibold">Mission & Responsabilités :</span>
+                    <p id="modal-mission" class="text-gray-300 bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs leading-relaxed">Description de la mission...</p>
+                </div>
+            </div>
+            <button onclick="closeAgentModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-all shadow-lg">Fermer le dossier</button>
+        </div>
+    </div>
 
     <script>
         // Horloge en temps réel
@@ -305,6 +402,74 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        // Compte à rebours jusqu'au 8 octobre 2026 à 23:59:59
+        function updateCountdown() {
+            const targetDate = new Date('2026-10-08T23:59:59').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = "<span class='text-red-400 font-bold'>DÉLIBÉRATION TERMINÉE</span>";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // Fonction de recherche interactive dans la liste des agents
+        function filterAgents() {
+            let input = document.getElementById('agent-search').value.toLowerCase();
+            let cards = document.getElementsByClassName('agent-card');
+
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].getElementsByClassName('agent-name')[0].textContent.toLowerCase();
+                if (name.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        // Mode Alerte Rouge Dynamique
+        function toggleRedAlert() {
+            const body = document.getElementById('app-body');
+            const btn = document.getElementById('alert-btn');
+            body.classList.toggle('red-alert-mode');
+            
+            if (body.classList.contains('red-alert-mode')) {
+                btn.textContent = "🛡️ MODE NORMAL";
+                btn.className = "bg-cyan-950 hover:bg-cyan-900 text-cyan-400 border border-cyan-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
+            } else {
+                btn.textContent = "🚨 MODE ALERTE";
+                btn.className = "bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
+            }
+        }
+
+        // Gestion de la modale des agents avec missions
+        function openAgentModal(name, role, level, spec, mission) {
+            document.getElementById('modal-name').textContent = name;
+            document.getElementById('modal-role').textContent = role;
+            document.getElementById('modal-level').textContent = level;
+            document.getElementById('modal-spec').textContent = spec;
+            document.getElementById('modal-mission').textContent = mission;
+            document.getElementById('agent-modal').classList.remove('hidden');
+        }
+
+        function closeAgentModal() {
+            document.getElementById('agent-modal').classList.add('hidden');
+        }
 
         // Enregistrement du Service Worker pour la PWA
         if ('serviceWorker' in navigator) {
