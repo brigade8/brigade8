@@ -42,6 +42,18 @@
         .progress-bar {
             animation: progress 1.5s ease-out forwards;
         }
+        
+        /* Personnalisation de la scrollbar pour le terminal */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(34, 211, 238, 0.3);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500 relative">
@@ -67,10 +79,12 @@
         </div>
 
         <!-- Onglets de navigation -->
-        <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800">
-            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
-            <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
-            <button onclick="switchTab('social')" id="tab-btn-social" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
+        <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1">
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
+            <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
+            <button onclick="switchTab('social')" id="tab-btn-social" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
+            <!-- NOUVEL ONGLET -->
+            <button onclick="switchTab('missions')" id="tab-btn-missions" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700 ml-1 pl-4">Terminal & Missions</button>
         </div>
 
         <!-- Contrôles du haut -->
@@ -200,7 +214,7 @@
                     </div>
                 </div>
 
-                <!-- Alertes de Sécurité -->
+                <!-- Alertes de Sécurité (AMÉLIORÉE) -->
                 <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl border border-red-500/30 alert-pulse relative overflow-hidden transition-all duration-500">
                     <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">CRITIQUE</div>
                     <h3 class="text-lg font-semibold text-red-500 mb-2 flex items-center gap-2">
@@ -214,6 +228,11 @@
                             <br><br>
                             Ces interactions non vérifiées représentent une faille potentielle d'ingénierie sociale (Social Engineering). Le risque de compromission de données ou de manipulation lors des missions sur le terrain est considéré comme élevé. Un recadrage est exigé.
                         </p>
+                        <!-- NOUVEAU BOUTON -->
+                        <button onclick="openIntelligenceModal()" class="mt-4 flex items-center gap-2 text-xs font-bold bg-red-800 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors w-full justify-center border border-red-600/50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            OUVRIR LE DOSSIER DE RENSEIGNEMENT (CLASSÉ)
+                        </button>
                     </div>
                 </div>
 
@@ -235,6 +254,64 @@
                 </div>
             </div>
             
+            <!-- NOUVEAU BLOC : INVENTAIRE MATÉRIEL & CONNEXIONS -->
+            <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-blue-500 relative overflow-hidden transition-all duration-500">
+                <div class="absolute top-0 right-0 bg-blue-600/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-bl-lg">SÉCURITÉ INFRASTRUCTURE</div>
+                
+                <h3 class="text-lg font-bold text-blue-400 mb-4 mt-2">INVENTAIRE MATÉRIEL & HISTORIQUE DE CONNEXION</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Inventaire -->
+                    <div class="bg-gray-950/50 rounded-lg p-4 border border-gray-800">
+                        <h4 class="text-xs font-bold text-gray-500 mb-3 uppercase">Équipements assignés</h4>
+                        <ul class="space-y-3">
+                            <li class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ordinateur HP ZBook</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs">Sain</span>
+                            </li>
+                            <li class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> Terminal Mobile Chiffré</span>
+                                <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs">Sain</span>
+                            </li>
+                            <li class="flex justify-between items-center text-sm border-t border-gray-800 pt-3">
+                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg> Clé Sécurité FIDO2</span>
+                                <span class="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded text-xs">Mise à jour requise</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Connexions -->
+                    <div class="bg-gray-950/50 rounded-lg p-4 border border-gray-800">
+                        <h4 class="text-xs font-bold text-gray-500 mb-3 uppercase">Dernières connexions au réseau B8</h4>
+                        <table class="w-full text-xs text-left text-gray-300">
+                            <thead class="text-gray-500 border-b border-gray-800">
+                                <tr>
+                                    <th class="pb-2 font-normal">Date & Heure</th>
+                                    <th class="pb-2 font-normal">Adresse IP</th>
+                                    <th class="pb-2 font-normal text-right">Localisation</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800 font-mono">
+                                <tr>
+                                    <td class="py-2">08 Oct 2026, 01:15</td>
+                                    <td class="py-2 text-cyan-400">192.168.1.45</td>
+                                    <td class="py-2 text-right">Secteur Alpha (VPN)</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">07 Oct 2026, 22:40</td>
+                                    <td class="py-2 text-cyan-400">10.0.4.112</td>
+                                    <td class="py-2 text-right">QG Brigade 8</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 text-gray-500">07 Oct 2026, 14:05</td>
+                                    <td class="py-2 text-gray-500">10.0.4.112</td>
+                                    <td class="py-2 text-right text-gray-500">QG Brigade 8</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- Dotation et Primes -->
             <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-emerald-500 relative overflow-hidden transition-all duration-500">
                 <div class="absolute top-0 right-0 bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-2 shadow-lg shadow-orange-900/50">
@@ -288,7 +365,6 @@
                 <!-- Grille des agents intégrale -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="agents-grid">
                     
-                    <!-- Message vide -->
                     <p id="empty-search-msg" class="hidden text-center text-gray-500 py-8 col-span-full font-mono">Aucun agent ne correspond à cette recherche.</p>
 
                     <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8, validation des stratégies de cybersécurité et arbitrage des rapports de terrain.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center shadow-md cursor-pointer hover:bg-cyan-950/40 transition-all">
@@ -399,7 +475,7 @@
                 </div>
             </div>
 
-            <!-- Grille du cercle social avec Filtres interactifs -->
+            <!-- Grille du cercle social -->
             <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl space-y-4 transition-all duration-500">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
                     <h3 class="text-lg font-bold text-white">RÉPERTOIRE DES RELATIONS</h3>
@@ -514,6 +590,86 @@
 
         </div>
 
+        <!-- ================= ONGLET 4 : TERMINAL & MISSIONS (NOUVEAU) ================= -->
+        <div id="tab-missions" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 tab-content">
+            
+            <!-- Journal des missions (Mission Logs) -->
+            <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl flex flex-col h-[500px] transition-all duration-500">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    JOURNAL DES MISSIONS
+                </h3>
+                
+                <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                    <!-- Mission 1 -->
+                    <div class="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-cyan-400 font-mono text-sm">OP: SHADOW-NET</span>
+                            <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-xs font-bold border border-green-500/30">SUCCÈS</span>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-2">Infiltration du réseau cible et récupération des logs d'authentification. Aucune détection signalée.</p>
+                        <div class="text-xs text-gray-500 flex justify-between">
+                            <span>Agent : M. Najhi</span>
+                            <span>Date : 02 Oct 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Mission 2 -->
+                    <div class="bg-gray-950/50 p-4 rounded-lg border border-red-900/50 border-l-4 border-l-red-500">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-red-400 font-mono text-sm">OP: FIREWALL-BREACH</span>
+                            <span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-xs font-bold border border-red-500/30">COMPROMIS</span>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-2">Test d'intrusion sociale échoué. La cible a identifié le vecteur d'attaque (Phishing verbal).</p>
+                        <div class="text-xs text-gray-500 flex justify-between">
+                            <span>Agent : M. Najhi</span>
+                            <span>Date : 28 Sep 2026</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Mission 3 -->
+                    <div class="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-cyan-400 font-mono text-sm">OP: DATA-SWEEP</span>
+                            <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-xs font-bold border border-green-500/30">SUCCÈS</span>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-2">Audit de sécurité des bases de données internes. Correction de 3 failles de niveau modéré.</p>
+                        <div class="text-xs text-gray-500 flex justify-between">
+                            <span>Agent : M. Najhi</span>
+                            <span>Date : 15 Sep 2026</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faux Terminal CLI (Interactif) -->
+            <div class="glass-ui bg-black/90 border border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.1)] p-4 rounded-2xl flex flex-col h-[500px] font-mono text-sm relative overflow-hidden">
+                <!-- Effet scanline TV -->
+                <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-20"></div>
+                
+                <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
+                    <span class="text-gray-500 text-xs">B8-SECURE-TERMINAL v2.4</span>
+                    <div class="flex gap-1.5">
+                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                </div>
+
+                <div id="cli-output" class="flex-1 overflow-y-auto text-cyan-500 space-y-1.5 pr-2 break-words">
+                    <div class="text-gray-400">Authentification réussie. Accès niveau 2 accordé.</div>
+                    <div>> Initialisation du terminal sécurisé de la Brigade 8...</div>
+                    <div class="text-emerald-400">Système prêt. Tapez 'help' pour les commandes.</div>
+                </div>
+                
+                <div class="flex items-center mt-3 pt-3 border-t border-gray-800 text-cyan-400">
+                    <span class="mr-2 font-bold">root@b8-najhi:~#</span>
+                    <input type="text" id="cli-input" autocomplete="off" class="bg-transparent border-none outline-none flex-1 text-cyan-300 placeholder-cyan-900 focus:ring-0" placeholder="..." onkeypress="handleCLI(event)">
+                </div>
+            </div>
+
+        </div>
+
     </main>
 
     <!-- Modal Fiche Agent -->
@@ -544,23 +700,63 @@
             <button onclick="closeAgentModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-all shadow-lg">Fermer le dossier</button>
         </div>
     </div>
+    
+    <!-- Modal Dossier de Renseignement (Intelligence Files) - NOUVEAU -->
+    <div id="intel-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity">
+        <div class="glass-ui bg-gray-900 border border-red-500/50 p-0 rounded-xl max-w-2xl w-full relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
+            <!-- Header Modal Rouge -->
+            <div class="bg-red-950 p-4 border-b border-red-800 flex justify-between items-center sticky top-0">
+                <div class="flex items-center gap-2">
+                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <h3 class="text-lg font-bold text-white tracking-widest uppercase">Dossier Renseignement #7742</h3>
+                </div>
+                <button aria-label="Fermer" onclick="closeIntelligenceModal()" class="text-red-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
+            </div>
+            <!-- Contenu document faux -->
+            <div class="p-6 overflow-y-auto text-sm text-gray-300 font-mono space-y-4 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+                <div class="text-center mb-6">
+                    <span class="border-2 border-red-600 text-red-500 font-bold px-4 py-1 rotate-12 inline-block opacity-80 text-xl tracking-widest">CLASSIFIÉ : SECRET</span>
+                </div>
+                <p><strong>SUJET :</strong> MOHAMED NAJHI (AGT-CYB-7742)</p>
+                <p><strong>DATE DE L'AUDIT :</strong> 05 OCT 2026</p>
+                <p><strong>DÉPARTEMENT :</strong> CONTRE-ESPIONNAGE INTERNE</p>
+                <hr class="border-gray-700">
+                <p class="text-red-400 font-bold">RÉSUMÉ DE L'INCIDENT (RISQUE D'INGÉNIERIE SOCIALE) :</p>
+                <p class="leading-relaxed">Nos capteurs de surveillance réseau et communications ont intercepté de multiples signaux non autorisés au sein du cercle social étendu de la cible. Des interactions prolongées ont été relevées avec des profils non vérifiés ("relations suspectes avec des meufs").</p>
+                <p class="leading-relaxed"><strong>Risque identifié :</strong> Ces profils peuvent être utilisés par des entités rivales comme vecteurs de <em>Social Engineering</em> visant à soutirer des informations confidentielles sur la structure interne de la Brigade 8 ou pour déployer des <em>phishing payloads</em> sur les terminaux personnels de l'agent.</p>
+                <div class="bg-black/50 p-4 border-l-4 border-red-500 mt-4 text-xs text-gray-400">
+                    > LOG INTERCEPTION [FRAG: 3A-9B]<br>
+                    > SRC: Inconnu | DST: Terminal Mobile 7742<br>
+                    > STATUT: Contenu flouté, balises suspectes détectées.<br>
+                    > DÉCISION ALGORITHMIQUE: VERROUILLAGE RECOMMANDÉ.
+                </div>
+                <p class="mt-4"><strong>RECOMMANDATION TACTIQUE :</strong> L'agent doit procéder à un nettoyage immédiat de ses canaux de communication non sécurisés. L'évaluation pour l'embauche définitive du 08/10 tiendra compte de la résolution de cette faille humaine.</p>
+            </div>
+            <div class="p-4 border-t border-gray-800 bg-gray-950 text-right">
+                <button onclick="closeIntelligenceModal()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition-colors text-sm">Fermer l'archive</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // === 1. GESTION DES ONGLETS AVEC SAUVEGARDE DE L'ÉTAT ===
+        // === 1. GESTION DES ONGLETS AVEC SAUVEGARDE ===
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-btn-dashboard').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-brigade').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-social').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-dashboard').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-brigade').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-social').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-missions').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700 ml-1 pl-4";
 
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.getElementById('tab-btn-' + tabId).className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
             
-            // Sauvegarde dans le navigateur
+            let btnClass = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
+            if(tabId === 'missions') btnClass += " border-l border-gray-700 ml-1 pl-4";
+            
+            document.getElementById('tab-btn-' + tabId).className = btnClass;
+            
             localStorage.setItem('activeBrigadeTab', tabId);
         }
 
-        // Charger l'onglet sauvegardé au démarrage
         document.addEventListener("DOMContentLoaded", () => {
             const savedTab = localStorage.getItem('activeBrigadeTab') || 'dashboard';
             switchTab(savedTab);
@@ -608,7 +804,6 @@
                     cards[i].style.display = "none";
                 }
             }
-            
             document.getElementById('empty-search-msg').style.display = hasResults ? 'none' : 'block';
         }
 
@@ -616,7 +811,6 @@
         function filterSocial(riskLevel) {
             let cards = document.getElementsByClassName('social-card');
             
-            // Reset styles des boutons
             document.querySelectorAll('#tab-social button[id^="filter-"]').forEach(btn => {
                 btn.classList.remove('bg-gray-700', 'bg-red-950', 'bg-orange-950', 'bg-emerald-950');
                 btn.classList.add('opacity-50');
@@ -624,7 +818,6 @@
             document.getElementById('filter-' + riskLevel).classList.remove('opacity-50');
             document.getElementById('filter-' + riskLevel).classList.add('bg-opacity-100');
             
-            // Appliquer les couleurs actives aux boutons selon le filtre choisi
             if(riskLevel === 'all') document.getElementById('filter-all').classList.add('bg-gray-700');
             if(riskLevel === 'red') document.getElementById('filter-red').classList.add('bg-red-950');
             if(riskLevel === 'orange') document.getElementById('filter-orange').classList.add('bg-orange-950');
@@ -639,7 +832,6 @@
             }
         }
 
-        // Initialisation de l'état "Tous" pour les filtres du cercle social
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('filter-all').classList.remove('opacity-50');
             document.getElementById('filter-all').classList.add('bg-gray-700', 'bg-opacity-100');
@@ -664,7 +856,8 @@
             }
         }
 
-        // === 6. MODALE ET ACCESSIBILITÉ ===
+        // === 6. MODALES ===
+        // Modal Agent
         function openAgentModal(name, role, level, spec, mission) {
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-role').textContent = role;
@@ -673,19 +866,68 @@
             document.getElementById('modal-mission').textContent = mission;
             document.getElementById('agent-modal').classList.remove('hidden');
         }
-
         function closeAgentModal() {
             document.getElementById('agent-modal').classList.add('hidden');
         }
-
-        // Fermeture au clic extérieur
         document.getElementById('agent-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeAgentModal();
-            }
+            if (e.target === this) closeAgentModal();
         });
 
-        // === 7. INSTALLATION PWA ===
+        // Modal Renseignement (Nouveau)
+        function openIntelligenceModal() {
+            document.getElementById('intel-modal').classList.remove('hidden');
+        }
+        function closeIntelligenceModal() {
+            document.getElementById('intel-modal').classList.add('hidden');
+        }
+        document.getElementById('intel-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeIntelligenceModal();
+        });
+
+        // === 7. LOGIQUE FAUX TERMINAL (CLI) ===
+        function handleCLI(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                const cmd = input.value.trim().toLowerCase();
+                const output = document.getElementById('cli-output');
+                
+                if (cmd === '') return;
+                
+                // Affiche la commande de l'utilisateur
+                output.innerHTML += `<div><span class="text-white font-bold">root@b8-najhi:~#</span> ${input.value}</div>`;
+                
+                // Traitement des commandes
+                setTimeout(() => {
+                    if (cmd === 'clear') {
+                        output.innerHTML = '';
+                    } else if (cmd === 'help') {
+                        output.innerHTML += `
+                            <div class="text-gray-300 ml-4 py-1">
+                            Commandes disponibles:<br>
+                            - <span class="text-cyan-400">status</span> : Affiche l'état du système<br>
+                            - <span class="text-cyan-400">ping [cible]</span> : Simule une requête réseau<br>
+                            - <span class="text-cyan-400">scan</span> : Lance un audit local rapide<br>
+                            - <span class="text-cyan-400">clear</span> : Nettoie le terminal
+                            </div>`;
+                    } else if (cmd === 'status') {
+                        output.innerHTML += `<div class="text-emerald-400 ml-4">> Tous les modules opérationnels. Surveillance active.</div>`;
+                    } else if (cmd === 'scan') {
+                        output.innerHTML += `<div class="text-yellow-400 ml-4">> Scan en cours... 100%<br>> Avertissement: Vulnérabilité Sociale détectée (Profil 7742).</div>`;
+                    } else if (cmd.startsWith('ping')) {
+                        let target = cmd.split(' ')[1] || 'b8-server';
+                        output.innerHTML += `<div class="text-gray-400 ml-4">PING ${target} (10.0.0.1): 56 data bytes<br>64 bytes from 10.0.0.1: icmp_seq=0 ttl=64 time=12.045 ms</div>`;
+                    } else {
+                        output.innerHTML += `<div class="text-red-400 ml-4">bash: ${cmd.split(' ')[0]}: command not found</div>`;
+                    }
+                    output.scrollTop = output.scrollHeight;
+                }, 300);
+
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+
+        // === 8. INSTALLATION PWA ===
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
