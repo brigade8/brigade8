@@ -2,43 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport adapté aux écrans iPhone avec encoche / Dynamic Island -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Agent - Brigade 8</title>
-    
-    <!-- PWA & Web App Meta Tags iOS -->
+    <!-- Liaison du Manifest pour la PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030712">
     
-    <!-- Spécifique iOS Safari -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Brigade 8">
-    <link rel="apple-touch-icon" href="icon8.png">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Prise en compte des Safe Areas iOS (Encoche / barre du bas) */
-        body {
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+        /* Effet Glassmorphism */
+        .glass-panel {
+            background: rgba(17, 25, 40, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.125);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-
-        /* Empêcher le zoom automatique agaçant d'iOS lors du clic sur un input */
-        input, select, textarea {
-            font-size: 16px !important;
-        }
-
+        
         /* Mode Alerte Rouge Dynamique */
         body.red-alert-mode {
             background-color: #180202 !important;
         }
-        body.red-alert-mode .glass-ui {
-            background: rgba(40, 10, 10, 0.85) !important;
-            border-color: rgba(239, 68, 68, 0.4) !important;
+        body.red-alert-mode .glass-panel {
+            background: rgba(40, 10, 10, 0.85);
+            border-color: rgba(239, 68, 68, 0.4);
         }
         body.red-alert-mode header {
-            border-bottom-color: rgba(239, 68, 68, 0.6) !important;
+            border-bottom-color: rgba(239, 68, 68, 0.6);
         }
 
         /* Animations */
@@ -47,23 +37,22 @@
             70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        .alert-pulse { animation: pulse-red 2s infinite; }
+        .alert-pulse {
+            animation: pulse-red 2s infinite;
+        }
 
-        @keyframes progress { from { width: 0; } }
-        .progress-bar { animation: progress 1.5s ease-out forwards; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
-        ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.3); border-radius: 10px; }
+        @keyframes progress {
+            from { width: 0; }
+        }
+        .progress-bar {
+            animation: progress 1.5s ease-out forwards;
+        }
     </style>
 </head>
-<body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500 relative">
-
-    <!-- Surcouche visuelle pour le Mode Alerte -->
-    <div id="alert-overlay" class="fixed inset-0 pointer-events-none z-40 transition-colors duration-500"></div>
+<body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500">
 
     <!-- En-tête -->
-    <header class="glass-ui bg-gray-900/75 backdrop-blur-md border-b border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.37)] sticky top-0 z-50 p-4 flex flex-wrap justify-between items-center gap-4 transition-all duration-500">
+    <header class="glass-panel sticky top-0 z-50 p-4 border-b border-gray-800 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-4">
             <!-- Logo Brigade 8 -->
             <div class="relative flex items-center justify-center w-12 h-12 bg-gray-900 border border-cyan-500/50 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.4)] overflow-hidden">
@@ -81,17 +70,14 @@
 
         <!-- Onglets de navigation -->
         <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1">
-            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
-            <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
-            <button onclick="switchTab('social')" id="tab-btn-social" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
-            <button onclick="switchTab('missions')" id="tab-btn-missions" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700 ml-1 pl-4">Terminal & Missions</button>
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
+            <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
+            <button onclick="switchTab('social')" id="tab-btn-social" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
+            <button onclick="switchTab('comms')" id="tab-btn-comms" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700">Canal Sécurisé</button>
         </div>
 
         <!-- Contrôles du haut -->
         <div class="flex items-center gap-3">
-            <button id="install-btn" class="hidden bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-md text-xs font-bold transition-all shadow-md">
-                INSTALLER L'APP
-            </button>
             <button onclick="toggleRedAlert()" id="alert-btn" class="bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md">
                 🚨 MODE ALERTE
             </button>
@@ -99,13 +85,13 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto p-6 relative z-10">
+    <main class="max-w-6xl mx-auto p-6">
 
         <!-- ================= ONGLET 1 : DASHBOARD PRINCIPAL ================= -->
         <div id="tab-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6 tab-content">
 
             <!-- Colonne Gauche : Profil -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit transition-all duration-500">
+            <div class="glass-panel p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit">
                 <div class="relative mb-4">
                     <div class="w-32 h-32 rounded-full bg-gray-800 border-4 border-cyan-500 flex items-center justify-center overflow-hidden">
                         <img src="https://i.postimg.cc/njgSbCvM/file-000000000ac881f4a1d6222e2e266d76.png" alt="Photo de Mohamed Najhi" class="w-full h-full object-cover">
@@ -140,33 +126,28 @@
             <div class="md:col-span-2 space-y-6">
 
                 <!-- Compte à rebours dynamique -->
-                <div class="glass-ui bg-cyan-950/20 backdrop-blur-md border border-cyan-500/30 shadow-lg p-4 rounded-2xl flex items-center justify-between flex-wrap gap-4 transition-all duration-500">
+                <div class="glass-panel p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
                         <div class="bg-cyan-900/50 p-2.5 rounded-lg text-cyan-400">
-                            <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
                             <h4 class="text-xs text-gray-400 font-mono uppercase">Temps restant avant rapport final</h4>
                             <span class="text-cyan-400 font-bold text-sm">Échéance : 08/10/2026</span>
                         </div>
                     </div>
-                    <div id="countdown-container" class="font-mono text-white text-sm">
-                        <div id="countdown-blocks" class="flex gap-2">
-                            <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="days">00</span>j</div>
-                            <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="hours">00</span>h</div>
-                            <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="minutes">00</span>m</div>
-                            <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="seconds">00</span>s</div>
-                        </div>
-                        <div id="countdown-expired" class="hidden text-red-400 font-bold bg-red-950/50 px-4 py-1.5 rounded border border-red-500/30">
-                            DÉLIBÉRATION TERMINÉE
-                        </div>
+                    <div id="countdown" class="flex gap-2 font-mono text-white text-sm">
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="days">00</span>j</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="hours">00</span>h</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="minutes">00</span>m</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="seconds">00</span>s</div>
                     </div>
                 </div>
                 
                 <!-- Compétences Cognitives -->
-                <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl transition-all duration-500">
+                <div class="glass-panel p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-cyan-400 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         Capacités Analytiques
                     </h3>
                     
@@ -187,9 +168,9 @@
                 </div>
 
                 <!-- Facteurs Sociaux & Gestion -->
-                <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl transition-all duration-500">
+                <div class="glass-panel p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-yellow-400 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                         Profil Comportemental & Facteurs à Développer
                     </h3>
                     
@@ -215,10 +196,10 @@
                 </div>
 
                 <!-- Alertes de Sécurité -->
-                <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl border border-red-500/30 alert-pulse relative overflow-hidden transition-all duration-500">
+                <div class="glass-panel p-6 rounded-2xl border-red-500/30 alert-pulse relative overflow-hidden">
                     <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">CRITIQUE</div>
                     <h3 class="text-lg font-semibold text-red-500 mb-2 flex items-center gap-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         ALERTE COMPORTEMENTALE : VULNÉRABILITÉ IDENTIFIÉE
                     </h3>
                     <div class="bg-red-950/50 p-4 rounded-lg border border-red-900/50">
@@ -228,22 +209,17 @@
                             <br><br>
                             Ces interactions non vérifiées représentent une faille potentielle d'ingénierie sociale (Social Engineering). Le risque de compromission de données ou de manipulation lors des missions sur le terrain est considéré comme élevé. Un recadrage est exigé.
                         </p>
-                        <!-- Bouton Renseignement -->
-                        <button onclick="openIntelligenceModal()" class="mt-4 flex items-center gap-2 text-xs font-bold bg-red-800 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors w-full justify-center border border-red-600/50">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            OUVRIR LE DOSSIER DE RENSEIGNEMENT (CLASSÉ)
-                        </button>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Notes Administration -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-purple-500 relative overflow-hidden transition-all duration-500">
+            <!-- Note d'embauche (Administration) -->
+            <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-purple-500 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-purple-600/30 text-purple-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ADMINISTRATION</div>
                 <div class="flex items-start gap-4">
                     <div class="bg-purple-900/50 p-3 rounded-lg text-purple-400 mt-1">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-purple-400 mb-2">NOTE : DÉCISION D'EMBAUCHE DÉFINITIVE</h3>
@@ -253,67 +229,9 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- BLOC : INVENTAIRE MATÉRIEL & CONNEXIONS -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-blue-500 relative overflow-hidden transition-all duration-500">
-                <div class="absolute top-0 right-0 bg-blue-600/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-bl-lg">SÉCURITÉ INFRASTRUCTURE</div>
-                
-                <h3 class="text-lg font-bold text-blue-400 mb-4 mt-2">INVENTAIRE MATÉRIEL & HISTORIQUE DE CONNEXION</h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Inventaire -->
-                    <div class="bg-gray-950/50 rounded-lg p-4 border border-gray-800">
-                        <h4 class="text-xs font-bold text-gray-500 mb-3 uppercase">Équipements assignés</h4>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between items-center text-sm">
-                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ordinateur HP ZBook</span>
-                                <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs">Sain</span>
-                            </li>
-                            <li class="flex justify-between items-center text-sm">
-                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> Terminal Mobile Chiffré</span>
-                                <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs">Sain</span>
-                            </li>
-                            <li class="flex justify-between items-center text-sm border-t border-gray-800 pt-3">
-                                <span class="text-gray-300 flex items-center gap-2"><svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg> Clé Sécurité FIDO2</span>
-                                <span class="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded text-xs">Mise à jour requise</span>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- Connexions -->
-                    <div class="bg-gray-950/50 rounded-lg p-4 border border-gray-800">
-                        <h4 class="text-xs font-bold text-gray-500 mb-3 uppercase">Dernières connexions au réseau B8</h4>
-                        <table class="w-full text-xs text-left text-gray-300">
-                            <thead class="text-gray-500 border-b border-gray-800">
-                                <tr>
-                                    <th class="pb-2 font-normal">Date & Heure</th>
-                                    <th class="pb-2 font-normal">Adresse IP</th>
-                                    <th class="pb-2 font-normal text-right">Localisation</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-800 font-mono">
-                                <tr>
-                                    <td class="py-2">08 Oct 2026, 01:15</td>
-                                    <td class="py-2 text-cyan-400">192.168.1.45</td>
-                                    <td class="py-2 text-right">Secteur Alpha (VPN)</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2">07 Oct 2026, 22:40</td>
-                                    <td class="py-2 text-cyan-400">10.0.4.112</td>
-                                    <td class="py-2 text-right">QG Brigade 8</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2 text-gray-500">07 Oct 2026, 14:05</td>
-                                    <td class="py-2 text-gray-500">10.0.4.112</td>
-                                    <td class="py-2 text-right text-gray-500">QG Brigade 8</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
             <!-- Dotation et Primes -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-emerald-500 relative overflow-hidden transition-all duration-500">
+            <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-emerald-500 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-2 shadow-lg shadow-orange-900/50">
                     <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     ÉTAT : EN COURS
@@ -338,35 +256,34 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
 
         <!-- ================= ONGLET 2 : EFFECTIF BRIGADE ================= -->
         <div id="tab-brigade" class="hidden space-y-6 tab-content">
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl border-l-4 border-l-cyan-500 relative overflow-hidden transition-all duration-500">
+            <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ORGANIGRAMME</div>
                 
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div class="flex items-center gap-4">
                         <div class="bg-cyan-900/50 p-3 rounded-lg text-cyan-400">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-cyan-400">EFFECTIF DE LA BRIGADE 8 - HIÉRARCHIE DES AGENTS</h3>
                             <p class="text-gray-400 text-sm">Cliquez sur un agent pour afficher sa fiche tactique et ses missions.</p>
                         </div>
                     </div>
+                    <!-- Barre de recherche -->
                     <div class="w-full md:w-72">
                         <input type="text" id="agent-search" placeholder="Rechercher un coéquipier..." onkeyup="filterAgents()" class="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
                     </div>
                 </div>
                 
-                <!-- Grille des agents intégrale -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="agents-grid">
                     
-                    <p id="empty-search-msg" class="hidden text-center text-gray-500 py-8 col-span-full font-mono">Aucun agent ne correspond à cette recherche.</p>
-
+                    <!-- Saber Aballagh -->
                     <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8, validation des stratégies de cybersécurité et arbitrage des rapports de terrain.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center shadow-md cursor-pointer hover:bg-cyan-950/40 transition-all">
                         <div>
                             <span class="block text-white font-bold agent-name">Saber Aballagh</span>
@@ -375,6 +292,7 @@
                         <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-cyan-500/30">Niv. 16</span>
                     </div>
 
+                    <!-- Anis Salmi -->
                     <div onclick="openAgentModal('Anis Salmi', 'Opérateur Senior', 'Niveau 11', 'Analyse Réseau & Sécurité Périmétrique', 'Audit des passerelles réseau, traçage des intrusions et sécurisation des flux de données sensibles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Anis Salmi</span>
@@ -383,6 +301,7 @@
                         <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
+                    <!-- Chaimaa Benzakri -->
                     <div onclick="openAgentModal('Chaimaa Benzakri', 'Analyste Cybersécurité', 'Niveau 11', 'Cryptographie & Ingénierie Inverse', 'Analyse de code malveillant, rétro-ingénierie (reverse engineering) des scripts suspects et cryptographie.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Chaimaa Benzakri</span>
@@ -391,6 +310,7 @@
                         <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
+                    <!-- Soufiane Hadoui -->
                     <div onclick="openAgentModal('Soufiane Hadoui', 'Expert Intervention Terrain', 'Niveau 11', 'Sécurité des Systèmes Embarqués', 'Intervention rapide sur site, sécurisation physique des terminaux et neutralisation des failles matérielles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Soufiane Hadoui</span>
@@ -399,6 +319,7 @@
                         <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
+                    <!-- Akram Belfqih -->
                     <div onclick="openAgentModal('Akram Belfqih', 'Agent Tactique', 'Niveau 10', 'Surveillance & Traitement de Flux', 'Surveillance active des pare-feu (Firewalls) et filtrage des paquets de données en temps réel.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Akram Belfqih</span>
@@ -407,6 +328,7 @@
                         <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
                     </div>
 
+                    <!-- Ali Benchamssi -->
                     <div onclick="openAgentModal('Ali Benchamssi', 'Agent Spécialisé', 'Niveau 10', 'Sécurité des Données & Sauvegardes', 'Gestion des protocoles de sauvegarde des bases de données et intégrité des archives de la brigade.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Ali Benchamssi</span>
@@ -415,6 +337,7 @@
                         <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
                     </div>
 
+                    <!-- Wissal Asbahi -->
                     <div onclick="openAgentModal('Wissal Asbahi', 'Analyste Junior', 'Niveau 09', 'Surveillance des Logs & Alertes', 'Analyse des journaux d’événements (Logs) et détection précoce des signaux faibles d’attaque.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Wissal Asbahi</span>
@@ -423,6 +346,7 @@
                         <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 09</span>
                     </div>
 
+                    <!-- Ahmed Sajid -->
                     <div onclick="openAgentModal('Ahmed Sajid', 'Agent Support', 'Niveau 08', 'Maintenance Technique & Hardware', 'Support technique des postes de travail, maintenance des équipements et déploiement logistique.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Ahmed Sajid</span>
@@ -431,6 +355,7 @@
                         <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 08</span>
                     </div>
 
+                    <!-- Karim Chakhsi -->
                     <div onclick="openAgentModal('Karim Chakhsi', 'Stagiaire Terrain', 'Niveau 05', 'Phase d\'Apprentissage & Renseignement', 'Apprentissage des procédures de contre-espionnage et assistance aux enquêtes d’ingénierie sociale.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Karim Chakhsi</span>
@@ -439,6 +364,7 @@
                         <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 05</span>
                     </div>
 
+                    <!-- Rayane Bourachdi -->
                     <div onclick="openAgentModal('Rayane Bourachdi', 'Cadre en Formation', 'Niveau 04', 'Initiation aux Protocoles de Sécurité', 'Initiation aux bases de données de sécurité et simulation d’attaques contrôlées (Red Teaming de base).')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div>
                             <span class="text-gray-200 font-medium agent-name">Rayane Bourachdi</span>
@@ -455,11 +381,11 @@
         <!-- ================= ONGLET 3 : CERCLE SOCIAL ================= -->
         <div id="tab-social" class="hidden space-y-6 tab-content">
             
-            <div class="glass-ui bg-cyan-950/20 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl border-l-4 border-l-cyan-500 relative overflow-hidden transition-all duration-500">
+            <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 relative overflow-hidden bg-cyan-950/20">
                 <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">NOTE DE SÉCURITÉ</div>
                 <div class="flex items-start gap-4">
                     <div class="bg-cyan-900/50 p-3 rounded-lg text-cyan-400 mt-1">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-cyan-400 mb-2">SURVEILLANCE DU CERCLE SOCIAL DE MOHAMED</h3>
@@ -476,111 +402,104 @@
             </div>
 
             <!-- Grille du cercle social -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl space-y-4 transition-all duration-500">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+            <div class="glass-panel p-6 rounded-2xl space-y-4">
+                <div class="flex justify-between items-center mb-2">
                     <h3 class="text-lg font-bold text-white">RÉPERTOIRE DES RELATIONS</h3>
-                    
-                    <!-- Filtres -->
-                    <div class="flex flex-wrap gap-2 text-xs font-mono">
-                        <button onclick="filterSocial('all')" id="filter-all" class="px-3 py-1.5 rounded-md border border-gray-600 bg-gray-700 text-white transition-colors">Tous</button>
-                        <button onclick="filterSocial('red')" id="filter-red" class="px-3 py-1.5 rounded-md border border-red-800 bg-red-950/50 text-red-400 hover:bg-red-900 transition-colors opacity-50">Critiques</button>
-                        <button onclick="filterSocial('orange')" id="filter-orange" class="px-3 py-1.5 rounded-md border border-orange-800 bg-orange-950/50 text-orange-400 hover:bg-orange-900 transition-colors opacity-50">Vigilance</button>
-                        <button onclick="filterSocial('green')" id="filter-green" class="px-3 py-1.5 rounded-md border border-emerald-800 bg-emerald-950/50 text-emerald-400 hover:bg-emerald-900 transition-colors opacity-50">Sûrs</button>
-                    </div>
+                    <span class="text-xs text-gray-400 font-mono">Dernière synchro : Octobre 2026</span>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="social-grid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     
                     <!-- ROUGES -->
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Mehdi Kamal</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Yazid Tahir</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Mourad Ouhammou</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Yassin Soufiane</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Abdelmouiz Mamouni</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
-                    <div data-risk="red" class="social-card bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Ismail Achab</span>
                         <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
                     </div>
 
                     <!-- ORANGES -->
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Elkharaoubi</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Achraf Essemyhy</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Rihab Bensalem</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Anass Wild</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Nihal Bouasl</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Walid Necro</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Hamza Jamali</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Amine Bakare</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Alae El</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Oualid El Harroussi</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Islam Rached</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Mhamed Youssfi</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
-                    <div data-risk="orange" class="social-card bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Marouane</span>
                         <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
                     </div>
 
                     <!-- VERTS -->
-                    <div data-risk="green" class="social-card bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Ayoub Aloui</span>
                         <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
                     </div>
-                    <div data-risk="green" class="social-card bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Ahmed Benhessou</span>
                         <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
                     </div>
-                    <div data-risk="green" class="social-card bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center transition-all">
+                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
                         <span class="text-white font-medium">Adam Boumkouk</span>
                         <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
                     </div>
@@ -590,92 +509,143 @@
 
         </div>
 
-        <!-- ================= ONGLET 4 : TERMINAL & MISSIONS (NOUVEAU) ================= -->
-        <div id="tab-missions" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 tab-content">
-            
-            <!-- Journal des missions (Mission Logs) -->
-            <div class="glass-ui bg-gray-900/75 backdrop-blur-md border border-white/10 shadow-lg p-6 rounded-2xl flex flex-col h-[500px] transition-all duration-500">
-                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    JOURNAL DES MISSIONS
-                </h3>
+        <!-- ================= ONGLET 4 : CANAL SÉCURISÉ (DISCUSSION LONGUE AVEC DARIJA) ================= -->
+        <div id="tab-comms" class="hidden tab-content">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col h-[650px]">
                 
-                <div class="flex-1 overflow-y-auto pr-2 space-y-4">
-                    <!-- Mission 1 -->
-                    <div class="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-cyan-400 font-mono text-sm">OP: SHADOW-NET</span>
-                            <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-xs font-bold border border-green-500/30">SUCCÈS</span>
-                        </div>
-                        <p class="text-gray-300 text-sm mb-2">Infiltration du réseau cible et récupération des logs d'authentification. Aucune détection signalée.</p>
-                        <div class="text-xs text-gray-500 flex justify-between">
-                            <span>Agent : M. Najhi</span>
-                            <span>Date : 02 Oct 2026</span>
-                        </div>
+                <!-- En-tête du canal -->
+                <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-800 flex-wrap gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
+                        <h2 class="text-lg font-bold text-cyan-400">CANAL INTERNE B8 (RESTREINT - HORS MOHAMED NAJHI)</h2>
                     </div>
+                    <span class="text-xs font-mono text-gray-400 bg-gray-900 px-3 py-1 rounded border border-gray-700">Chiffrement E2E Actif</span>
+                </div>
 
-                    <!-- Mission 2 -->
-                    <div class="bg-gray-950/50 p-4 rounded-lg border border-red-900/50 border-l-4 border-l-red-500">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-red-400 font-mono text-sm">OP: FIREWALL-BREACH</span>
-                            <span class="bg-red-500/20 text-red-400 px-2 py-0.5 rounded text-xs font-bold border border-red-500/30">COMPROMIS</span>
-                        </div>
-                        <p class="text-gray-300 text-sm mb-2">Test d'intrusion sociale échoué. La cible a identifié le vecteur d'attaque (Phishing verbal).</p>
-                        <div class="text-xs text-gray-500 flex justify-between">
-                            <span>Agent : M. Najhi</span>
-                            <span>Date : 28 Sep 2026</span>
-                        </div>
-                    </div>
+                <!-- Bandeau d'avertissement de lecture seule -->
+                <div class="bg-red-950/60 border border-red-500/40 text-red-400 text-xs font-mono p-3 rounded-lg mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span>ACCÈS OBSERVATEUR SEULEMENT : En tant qu'agent en période de test, vos droits d'émission sur ce canal sont suspendus par la hiérarchie.</span>
+                </div>
+
+                <!-- Fil de discussion très long (Missions techniques, terrain & Darija) -->
+                <div class="flex-1 overflow-y-auto space-y-4 pr-3 text-sm font-mono">
                     
-                    <!-- Mission 3 -->
-                    <div class="bg-gray-950/50 p-4 rounded-lg border border-gray-800">
-                        <div class="flex justify-between items-start mb-2">
-                            <span class="text-cyan-400 font-mono text-sm">OP: DATA-SWEEP</span>
-                            <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-xs font-bold border border-green-500/30">SUCCÈS</span>
+                    <div class="text-center text-xs text-gray-500 my-2">— Début de la transmission tactique chiffrée —</div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
+                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
+                            <span>01:15</span>
                         </div>
-                        <p class="text-gray-300 text-sm mb-2">Audit de sécurité des bases de données internes. Correction de 3 failles de niveau modéré.</p>
-                        <div class="text-xs text-gray-500 flex justify-between">
-                            <span>Agent : M. Najhi</span>
-                            <span>Date : 15 Sep 2026</span>
+                        <p class="text-gray-300">L'équipe, salam 3likoum. On a une double opération cette nuit. D'un côté l'audit et le reverse engineering des serveurs, de l'autre l'intervention physique sur le terrain. Anis, wesh bditi l'analyse dyal traffic ?</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-blue-400 mb-1">
+                            <span class="font-bold">Anis Salmi (Opérateur Senior)</span>
+                            <span>01:18</span>
                         </div>
+                        <p class="text-gray-300">Walo labas Chef, kolchi f control. 3ndi daba tracking dyal les paquets TCP/IP. Kayn wahed l'IP mchouha kat7awel tdir Brute Force 3la les ports dyalna men 3chiyya hadi.</p>
                     </div>
-                </div>
-            </div>
 
-            <!-- Faux Terminal CLI (Interactif) -->
-            <div class="glass-ui bg-black/90 border border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.1)] p-4 rounded-2xl flex flex-col h-[500px] font-mono text-sm relative overflow-hidden">
-                <!-- Effet scanline TV -->
-                <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%] pointer-events-none opacity-20"></div>
-                
-                <div class="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
-                    <span class="text-gray-500 text-xs">B8-SECURE-TERMINAL v2.4</span>
-                    <div class="flex gap-1.5">
-                        <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-purple-400 mb-1">
+                            <span class="font-bold">Chaimaa Benzakri (Analyste Cybersécurité)</span>
+                            <span>01:22</span>
+                        </div>
+                        <p class="text-gray-300">Ana f sandbox daba kandidate l'analyse dyal dak l'exécutable. 3ndou payload mskhoun bzaf, kay-tenta y-bpassi l'antivirus w y-dir exfiltration l'database dyalna. Ila ma drnarihch patch f a9rab waqt radi yjiwna fihom f zher.</p>
                     </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
+                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
+                            <span>01:25</span>
+                        </div>
+                        <p class="text-gray-300">Chaimaa, dirili isolation tamma lil sandbox. Matkhalliha tconnecta la 3la LAN la 3la WAN. Khdmi b l'ISO offline.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-emerald-400 mb-1">
+                            <span class="font-bold">Soufiane Hadoui (Expert Intervention)</span>
+                            <span>01:30</span>
+                        </div>
+                        <p class="text-gray-300">Chef, ana daba woselt l'makan dyal l'opération sur terrain. L'bâtiment ghir zado fih la sécurité, mais l'porte de service arrière mkhaddma b badge RFID qdim. 3ndi l'cloner dyali wajed.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-yellow-400 mb-1">
+                            <span class="font-bold">Ahmed Sajid (Agent Support)</span>
+                            <span>01:32</span>
+                        </div>
+                        <p class="text-gray-300">Soufiane, radibalek men l'caméra li foq l'bab!rah fiha motion detector w night vision. Dir 3la yassrek w tkhabba wra l'colonne 3ad swipi l'badge.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-emerald-400 mb-1">
+                            <span class="font-bold">Soufiane Hadoui (Expert Intervention)</span>
+                            <span>01:35</span>
+                        </div>
+                        <p class="text-gray-300">Safe, tpassit l'caméra b najaḥ! Dkholna l'dakhel, daba f salla dyal les serveurs (Server Room). L'jaw bared bzaf w les rack kat-clignoti b zraq.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
+                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
+                            <span>01:38</span>
+                        </div>
+                        <p class="text-gray-300">Mzian Soufiane. Ila dkholti, dir branchement l'clé USB dyal l'extraction chiffrée f l'serveur principal rack #4. W matnsach, kon rapide f l'wqt.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-gray-300 mb-1">
+                            <span class="font-bold">Ali Benchamssi (Agent Spécialisé)</span>
+                            <span>01:42</span>
+                        </div>
+                        <p class="text-gray-300">Ana kan-suivi l'intégrité dyal backup men hna. Mli Soufiane y-bda l'copie, radi tban liya l'vitesse dyal transfer f ecran dyali. Kolchi stable l'an.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span class="font-bold">Wissal Asbahi (Analyste Junior)</span>
+                            <span>01:45</span>
+                        </div>
+                        <p class="text-gray-300">Khouti, kayn wahed l'alerte jdida f SIEM! Chi wahed kay-tenta y-dir scan 3la les ports dyalna mn barra. Wach n-bloqui l'subnet kamlo wla ghir l'IP?</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-blue-400 mb-1">
+                            <span class="font-bold">Anis Salmi (Opérateur Senior)</span>
+                            <span>01:48</span>
+                        </div>
+                        <p class="text-gray-300">La la mat-bloquich l'subnet kaml, rah fih des clients legitimes. Bloqui ghir l'IP li 3ndha l'signature qbiha. W dir drop l'icmp packets bach may-dirouch ping sweep.</p>
+                    </div>
+
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
+                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
+                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
+                            <span>01:52</span>
+                        </div>
+                        <p class="text-gray-300">Aya bslama, l'umur mzyana. Kol wahed y-bqa f poste dyalo. W b nisba l'sécurité interne w l'gestion dyal l'qadiya dyal la période de test, kan-tmana tkon l'amitié w l'khdma b jouj mzyanin. 3ndkom tnsaw l'objectif dyal l'brigade!</p>
+                    </div>
+
                 </div>
 
-                <div id="cli-output" class="flex-1 overflow-y-auto text-cyan-500 space-y-1.5 pr-2 break-words">
-                    <div class="text-gray-400">Authentification réussie. Accès niveau 2 accordé.</div>
-                    <div>> Initialisation du terminal sécurisé de la Brigade 8...</div>
-                    <div class="text-emerald-400">Système prêt. Tapez 'help' pour les commandes.</div>
+                <!-- Zone de saisie désactivée pour Mohamed -->
+                <div class="mt-4 pt-4 border-t border-gray-800 flex gap-2">
+                    <input type="text" disabled placeholder="Transmission interdite - Agent en période d'évaluation..." class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed">
+                    <button disabled class="bg-gray-800 text-gray-600 px-6 py-2.5 rounded-lg font-bold text-sm cursor-not-allowed">Envoyer</button>
                 </div>
-                
-                <div class="flex items-center mt-3 pt-3 border-t border-gray-800 text-cyan-400">
-                    <span class="mr-2 font-bold">root@b8-najhi:~#</span>
-                    <input type="text" id="cli-input" autocomplete="off" class="bg-transparent border-none outline-none flex-1 text-cyan-300 placeholder-cyan-900 focus:ring-0" placeholder="..." onkeypress="handleCLI(event)">
-                </div>
+
             </div>
-
         </div>
 
     </main>
 
     <!-- Modal Fiche Agent -->
-    <div id="agent-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-opacity">
-        <div class="glass-ui bg-gray-900/90 border border-cyan-500/50 p-6 rounded-2xl max-w-md w-full relative shadow-2xl" onclick="event.stopPropagation()">
-            <button aria-label="Fermer" onclick="closeAgentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+    <div id="agent-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-cyan-500/50 relative shadow-2xl">
+            <button onclick="closeAgentModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500 flex items-center justify-center text-cyan-400 font-bold">B8</div>
                 <div>
@@ -694,75 +664,43 @@
                 </div>
                 <div>
                     <span class="text-gray-400 block mb-1 font-semibold">Mission & Responsabilités :</span>
-                    <p id="modal-mission" class="text-gray-300 bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs leading-relaxed">Description...</p>
+                    <p id="modal-mission" class="text-gray-300 bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs leading-relaxed">Description de la mission...</p>
                 </div>
             </div>
             <button onclick="closeAgentModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-all shadow-lg">Fermer le dossier</button>
         </div>
     </div>
-    
-    <!-- Modal Dossier de Renseignement -->
-    <div id="intel-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity">
-        <div class="glass-ui bg-gray-900 border border-red-500/50 p-0 rounded-xl max-w-2xl w-full relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
-            <!-- Header Modal Rouge -->
-            <div class="bg-red-950 p-4 border-b border-red-800 flex justify-between items-center sticky top-0">
-                <div class="flex items-center gap-2">
-                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <h3 class="text-lg font-bold text-white tracking-widest uppercase">Dossier Renseignement #7742</h3>
-                </div>
-                <button aria-label="Fermer" onclick="closeIntelligenceModal()" class="text-red-400 hover:text-white text-2xl font-bold leading-none">&times;</button>
-            </div>
-            <!-- Contenu document faux -->
-            <div class="p-6 overflow-y-auto text-sm text-gray-300 font-mono space-y-4 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
-                <div class="text-center mb-6">
-                    <span class="border-2 border-red-600 text-red-500 font-bold px-4 py-1 rotate-12 inline-block opacity-80 text-xl tracking-widest">CLASSIFIÉ : SECRET</span>
-                </div>
-                <p><strong>SUJET :</strong> MOHAMED NAJHI (AGT-CYB-7742)</p>
-                <p><strong>DATE DE L'AUDIT :</strong> 05 OCT 2026</p>
-                <p><strong>DÉPARTEMENT :</strong> CONTRE-ESPIONNAGE INTERNE</p>
-                <hr class="border-gray-700">
-                <p class="text-red-400 font-bold">RÉSUMÉ DE L'INCIDENT (RISQUE D'INGÉNIERIE SOCIALE) :</p>
-                <p class="leading-relaxed">Nos capteurs de surveillance réseau et communications ont intercepté de multiples signaux non autorisés au sein du cercle social étendu de la cible. Des interactions prolongées ont été relevées avec des profils non vérifiés ("relations suspectes avec des meufs").</p>
-                <p class="leading-relaxed"><strong>Risque identifié :</strong> Ces profils peuvent être utilisés par des entités rivales comme vecteurs de <em>Social Engineering</em> visant à soutirer des informations confidentielles sur la structure interne de la Brigade 8 ou pour déployer des <em>phishing payloads</em> sur les terminaux personnels de l'agent.</p>
-                <div class="bg-black/50 p-4 border-l-4 border-red-500 mt-4 text-xs text-gray-400">
-                    > LOG INTERCEPTION [FRAG: 3A-9B]<br>
-                    > SRC: Inconnu | DST: Terminal Mobile 7742<br>
-                    > STATUT: Contenu flouté, balises suspectes détectées.<br>
-                    > DÉCISION ALGORITHMIQUE: VERROUILLAGE RECOMMANDÉ.
-                </div>
-                <p class="mt-4"><strong>RECOMMANDATION TACTIQUE :</strong> L'agent doit procéder à un nettoyage immédiat de ses canaux de communication non sécurisés. L'évaluation pour l'embauche définitive du 08/10 tiendra compte de la résolution de cette faille humaine.</p>
-            </div>
-            <div class="p-4 border-t border-gray-800 bg-gray-950 text-right">
-                <button onclick="closeIntelligenceModal()" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded transition-colors text-sm">Fermer l'archive</button>
-            </div>
-        </div>
-    </div>
 
     <script>
-        // === 1. GESTION DES ONGLETS AVEC SAUVEGARDE ===
+        // Gestion des onglets
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-btn-dashboard').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-brigade').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-social').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-missions').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700 ml-1 pl-4";
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-brigade').classList.add('hidden');
+            document.getElementById('tab-social').classList.add('hidden');
+            document.getElementById('tab-comms').classList.add('hidden');
+
+            document.getElementById('tab-btn-dashboard').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-brigade').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-social').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            document.getElementById('tab-btn-comms').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700";
 
             document.getElementById('tab-' + tabId).classList.remove('hidden');
             
-            let btnClass = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
-            if(tabId === 'missions') btnClass += " border-l border-gray-700 ml-1 pl-4";
+            let activeBtnClass = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
+            if(tabId === 'comms') activeBtnClass += " border-l border-gray-700";
             
-            document.getElementById('tab-btn-' + tabId).className = btnClass;
+            document.getElementById('tab-btn-' + tabId).className = activeBtnClass;
             
             localStorage.setItem('activeBrigadeTab', tabId);
         }
 
+        // Restauration de l'onglet actif au chargement
         document.addEventListener("DOMContentLoaded", () => {
             const savedTab = localStorage.getItem('activeBrigadeTab') || 'dashboard';
             switchTab(savedTab);
         });
 
-        // === 2. HORLOGE & COMPTE À REBOURS ===
+        // Horloge en temps réel
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').textContent = now.toLocaleTimeString('fr-FR') + ' | ' + now.toLocaleDateString('fr-FR');
@@ -770,94 +708,57 @@
         setInterval(updateClock, 1000);
         updateClock();
 
+        // Compte à rebours jusqu'au 8 octobre 2026
         function updateCountdown() {
             const targetDate = new Date('2026-10-08T23:59:59').getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById('countdown-blocks').classList.add('hidden');
-                document.getElementById('countdown-expired').classList.remove('hidden');
+                document.getElementById('countdown').innerHTML = "<span class='text-red-400 font-bold'>DÉLIBÉRATION TERMINÉE</span>";
                 return;
             }
 
-            document.getElementById('days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-            document.getElementById('hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
         }
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // === 3. RECHERCHE ET GESTION "EMPTY STATE" ===
+        // Recherche interactive agents
         function filterAgents() {
             let input = document.getElementById('agent-search').value.toLowerCase();
             let cards = document.getElementsByClassName('agent-card');
-            let hasResults = false;
 
             for (let i = 0; i < cards.length; i++) {
                 let name = cards[i].getElementsByClassName('agent-name')[0].textContent.toLowerCase();
-                if (name.includes(input)) {
-                    cards[i].style.display = "flex";
-                    hasResults = true;
-                } else {
-                    cards[i].style.display = "none";
-                }
-            }
-            document.getElementById('empty-search-msg').style.display = hasResults ? 'none' : 'block';
-        }
-
-        // === 4. FILTRES DU CERCLE SOCIAL ===
-        function filterSocial(riskLevel) {
-            let cards = document.getElementsByClassName('social-card');
-            
-            document.querySelectorAll('#tab-social button[id^="filter-"]').forEach(btn => {
-                btn.classList.remove('bg-gray-700', 'bg-red-950', 'bg-orange-950', 'bg-emerald-950');
-                btn.classList.add('opacity-50');
-            });
-            document.getElementById('filter-' + riskLevel).classList.remove('opacity-50');
-            document.getElementById('filter-' + riskLevel).classList.add('bg-opacity-100');
-            
-            if(riskLevel === 'all') document.getElementById('filter-all').classList.add('bg-gray-700');
-            if(riskLevel === 'red') document.getElementById('filter-red').classList.add('bg-red-950');
-            if(riskLevel === 'orange') document.getElementById('filter-orange').classList.add('bg-orange-950');
-            if(riskLevel === 'green') document.getElementById('filter-green').classList.add('bg-emerald-950');
-
-            for (let i = 0; i < cards.length; i++) {
-                if (riskLevel === 'all' || cards[i].getAttribute('data-risk') === riskLevel) {
-                    cards[i].style.display = "flex";
-                } else {
-                    cards[i].style.display = "none";
-                }
+                cards[i].style.display = name.includes(input) ? "flex" : "none";
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById('filter-all').classList.remove('opacity-50');
-            document.getElementById('filter-all').classList.add('bg-gray-700', 'bg-opacity-100');
-        });
-
-        // === 5. MODE ALERTE IMMERSIF ===
+        // Mode Alerte Rouge
         function toggleRedAlert() {
             const body = document.getElementById('app-body');
             const btn = document.getElementById('alert-btn');
-            const overlay = document.getElementById('alert-overlay');
-            
             body.classList.toggle('red-alert-mode');
             
             if (body.classList.contains('red-alert-mode')) {
                 btn.textContent = "🛡️ MODE NORMAL";
                 btn.className = "bg-cyan-950 hover:bg-cyan-900 text-cyan-400 border border-cyan-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
-                overlay.classList.add('bg-red-900/10'); 
             } else {
                 btn.textContent = "🚨 MODE ALERTE";
                 btn.className = "bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
-                overlay.classList.remove('bg-red-900/10');
             }
         }
 
-        // === 6. MODALES ===
-        // Modal Agent
+        // Modale des agents
         function openAgentModal(name, role, level, spec, mission) {
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-role').textContent = role;
@@ -866,88 +767,17 @@
             document.getElementById('modal-mission').textContent = mission;
             document.getElementById('agent-modal').classList.remove('hidden');
         }
+
         function closeAgentModal() {
             document.getElementById('agent-modal').classList.add('hidden');
         }
-        document.getElementById('agent-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeAgentModal();
-        });
 
-        // Modal Renseignement
-        function openIntelligenceModal() {
-            document.getElementById('intel-modal').classList.remove('hidden');
-        }
-        function closeIntelligenceModal() {
-            document.getElementById('intel-modal').classList.add('hidden');
-        }
-        document.getElementById('intel-modal').addEventListener('click', function(e) {
-            if (e.target === this) closeIntelligenceModal();
-        });
-
-        // === 7. LOGIQUE FAUX TERMINAL (CLI) ===
-        function handleCLI(e) {
-            if (e.key === 'Enter') {
-                const input = e.target;
-                const cmd = input.value.trim().toLowerCase();
-                const output = document.getElementById('cli-output');
-                
-                if (cmd === '') return;
-                
-                output.innerHTML += `<div><span class="text-white font-bold">root@b8-najhi:~#</span> ${input.value}</div>`;
-                
-                setTimeout(() => {
-                    if (cmd === 'clear') {
-                        output.innerHTML = '';
-                    } else if (cmd === 'help') {
-                        output.innerHTML += `
-                            <div class="text-gray-300 ml-4 py-1">
-                            Commandes disponibles:<br>
-                            - <span class="text-cyan-400">status</span> : Affiche l'état du système<br>
-                            - <span class="text-cyan-400">ping [cible]</span> : Simule une requête réseau<br>
-                            - <span class="text-cyan-400">scan</span> : Lance un audit local rapide<br>
-                            - <span class="text-cyan-400">clear</span> : Nettoie le terminal
-                            </div>`;
-                    } else if (cmd === 'status') {
-                        output.innerHTML += `<div class="text-emerald-400 ml-4">> Tous les modules opérationnels. Surveillance active.</div>`;
-                    } else if (cmd === 'scan') {
-                        output.innerHTML += `<div class="text-yellow-400 ml-4">> Scan en cours... 100%<br>> Avertissement: Vulnérabilité Sociale détectée (Profil 7742).</div>`;
-                    } else if (cmd.startsWith('ping')) {
-                        let target = cmd.split(' ')[1] || 'b8-server';
-                        output.innerHTML += `<div class="text-gray-400 ml-4">PING ${target} (10.0.0.1): 56 data bytes<br>64 bytes from 10.0.0.1: icmp_seq=0 ttl=64 time=12.045 ms</div>`;
-                    } else {
-                        output.innerHTML += `<div class="text-red-400 ml-4">bash: ${cmd.split(' ')[0]}: command not found</div>`;
-                    }
-                    output.scrollTop = output.scrollHeight;
-                }, 300);
-
-                input.value = '';
-                output.scrollTop = output.scrollHeight;
-            }
-        }
-
-        // === 8. INSTALLATION PWA ===
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('install-btn');
-            installBtn.classList.remove('hidden');
-
-            installBtn.addEventListener('click', () => {
-                installBtn.classList.add('hidden');
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                });
-            });
-        });
-
-        // Enregistrement du Service Worker
+        // Service Worker PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then((reg) => console.log('Service Worker enregistré.'))
-                    .catch((err) => console.log('Erreur SW:', err));
+                    .then((reg) => console.log('Service Worker enregistré avec succès:', reg.scope))
+                    .catch((err) => console.log('Échec de l\'enregistrement du Service Worker:', err));
             });
         }
     </script>
