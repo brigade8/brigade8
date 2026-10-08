@@ -2,18 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Viewport adapté aux écrans iPhone avec encoche / Dynamic Island -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Dashboard Agent - Brigade 8</title>
     
-    <!-- PWA & Mobile Meta Tags -->
+    <!-- PWA & Web App Meta Tags iOS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030712">
+    
+    <!-- Spécifique iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Brigade 8">
     <link rel="apple-touch-icon" href="icon8.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Prise en compte des Safe Areas iOS (Encoche / barre du bas) */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+        }
+
+        /* Empêcher le zoom automatique agaçant d'iOS lors du clic sur un input */
+        input, select, textarea {
+            font-size: 16px !important;
+        }
+
         /* Mode Alerte Rouge Dynamique */
         body.red-alert-mode {
             background-color: #180202 !important;
@@ -32,28 +47,14 @@
             70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        .alert-pulse {
-            animation: pulse-red 2s infinite;
-        }
+        .alert-pulse { animation: pulse-red 2s infinite; }
 
-        @keyframes progress {
-            from { width: 0; }
-        }
-        .progress-bar {
-            animation: progress 1.5s ease-out forwards;
-        }
+        @keyframes progress { from { width: 0; } }
+        .progress-bar { animation: progress 1.5s ease-out forwards; }
         
-        /* Personnalisation de la scrollbar pour le terminal */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(34, 211, 238, 0.3);
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.3); border-radius: 10px; }
     </style>
 </head>
 <body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500 relative">
@@ -83,7 +84,6 @@
             <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
             <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
             <button onclick="switchTab('social')" id="tab-btn-social" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
-            <!-- NOUVEL ONGLET -->
             <button onclick="switchTab('missions')" id="tab-btn-missions" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700 ml-1 pl-4">Terminal & Missions</button>
         </div>
 
@@ -214,7 +214,7 @@
                     </div>
                 </div>
 
-                <!-- Alertes de Sécurité (AMÉLIORÉE) -->
+                <!-- Alertes de Sécurité -->
                 <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl border border-red-500/30 alert-pulse relative overflow-hidden transition-all duration-500">
                     <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">CRITIQUE</div>
                     <h3 class="text-lg font-semibold text-red-500 mb-2 flex items-center gap-2">
@@ -228,7 +228,7 @@
                             <br><br>
                             Ces interactions non vérifiées représentent une faille potentielle d'ingénierie sociale (Social Engineering). Le risque de compromission de données ou de manipulation lors des missions sur le terrain est considéré comme élevé. Un recadrage est exigé.
                         </p>
-                        <!-- NOUVEAU BOUTON -->
+                        <!-- Bouton Renseignement -->
                         <button onclick="openIntelligenceModal()" class="mt-4 flex items-center gap-2 text-xs font-bold bg-red-800 hover:bg-red-700 text-white px-4 py-2 rounded transition-colors w-full justify-center border border-red-600/50">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             OUVRIR LE DOSSIER DE RENSEIGNEMENT (CLASSÉ)
@@ -254,7 +254,7 @@
                 </div>
             </div>
             
-            <!-- NOUVEAU BLOC : INVENTAIRE MATÉRIEL & CONNEXIONS -->
+            <!-- BLOC : INVENTAIRE MATÉRIEL & CONNEXIONS -->
             <div class="glass-ui bg-gray-900/75 backdrop-blur-md shadow-lg p-6 rounded-2xl md:col-span-3 border border-white/10 border-l-4 border-l-blue-500 relative overflow-hidden transition-all duration-500">
                 <div class="absolute top-0 right-0 bg-blue-600/30 text-blue-300 text-xs font-bold px-3 py-1 rounded-bl-lg">SÉCURITÉ INFRASTRUCTURE</div>
                 
@@ -701,7 +701,7 @@
         </div>
     </div>
     
-    <!-- Modal Dossier de Renseignement (Intelligence Files) - NOUVEAU -->
+    <!-- Modal Dossier de Renseignement -->
     <div id="intel-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity">
         <div class="glass-ui bg-gray-900 border border-red-500/50 p-0 rounded-xl max-w-2xl w-full relative shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onclick="event.stopPropagation()">
             <!-- Header Modal Rouge -->
@@ -873,7 +873,7 @@
             if (e.target === this) closeAgentModal();
         });
 
-        // Modal Renseignement (Nouveau)
+        // Modal Renseignement
         function openIntelligenceModal() {
             document.getElementById('intel-modal').classList.remove('hidden');
         }
@@ -893,10 +893,8 @@
                 
                 if (cmd === '') return;
                 
-                // Affiche la commande de l'utilisateur
                 output.innerHTML += `<div><span class="text-white font-bold">root@b8-najhi:~#</span> ${input.value}</div>`;
                 
-                // Traitement des commandes
                 setTimeout(() => {
                     if (cmd === 'clear') {
                         output.innerHTML = '';
