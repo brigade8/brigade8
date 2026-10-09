@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Agent - Brigade 8</title>
-    <!-- Liaison du Manifest pour la PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030712">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Effet Glassmorphism */
         .glass-panel {
             background: rgba(17, 25, 40, 0.75);
             backdrop-filter: blur(12px);
@@ -19,47 +17,23 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         
-        /* Mode Alerte Rouge Dynamique */
-        body.red-alert-mode {
-            background-color: #180202 !important;
-        }
-        body.red-alert-mode .glass-panel {
-            background: rgba(40, 10, 10, 0.85);
-            border-color: rgba(239, 68, 68, 0.4);
-        }
-        body.red-alert-mode header {
-            border-bottom-color: rgba(239, 68, 68, 0.6);
-        }
+        body.red-alert-mode { background-color: #180202 !important; }
+        body.red-alert-mode .glass-panel { background: rgba(40, 10, 10, 0.85); border-color: rgba(239, 68, 68, 0.4); }
+        body.red-alert-mode header { border-bottom-color: rgba(239, 68, 68, 0.6); }
 
-        /* Animations */
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        .alert-pulse {
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes progress {
-            from { width: 0; }
-        }
-        .progress-bar {
-            animation: progress 1.5s ease-out forwards;
-        }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .alert-pulse { animation: pulse-red 2s infinite; }
+        @keyframes progress { from { width: 0; } }
+        .progress-bar { animation: progress 1.5s ease-out forwards; }
     </style>
 </head>
 <body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500">
 
-    <!-- En-tête -->
     <header class="glass-panel sticky top-0 z-50 p-4 border-b border-gray-800 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-4">
-            <!-- Logo Brigade 8 -->
             <div class="relative flex items-center justify-center w-12 h-12 bg-gray-900 border border-cyan-500/50 rounded-xl shadow-[0_0_15px_rgba(34,211,238,0.4)] overflow-hidden">
                 <img src="icon8.png" alt="Logo Brigade 8" class="w-full h-full object-cover">
             </div>
-            
-            <!-- Titre et Statut -->
             <div class="flex items-center gap-3">
                 <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]" id="status-dot"></div>
                 <h1 class="text-xl font-bold tracking-widest text-cyan-400" id="header-title">
@@ -68,7 +42,6 @@
             </div>
         </div>
 
-        <!-- Onglets de navigation -->
         <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1">
             <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
             <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
@@ -76,7 +49,6 @@
             <button onclick="switchTab('comms')" id="tab-btn-comms" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700">Canal Sécurisé</button>
         </div>
 
-        <!-- Contrôles du haut -->
         <div class="flex items-center gap-3">
             <button onclick="toggleRedAlert()" id="alert-btn" class="bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md">
                 🚨 MODE ALERTE
@@ -93,31 +65,31 @@
             <!-- Colonne Gauche : Profil -->
             <div class="glass-panel p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit">
                 <div class="relative mb-4">
-                    <div class="w-32 h-32 rounded-full bg-gray-800 border-4 border-cyan-500 flex items-center justify-center overflow-hidden">
+                    <div class="w-32 h-32 rounded-full bg-gray-800 border-4 border-green-500 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(34,197,94,0.3)]">
                         <img src="https://i.postimg.cc/njgSbCvM/file-000000000ac881f4a1d6222e2e266d76.png" alt="Photo de Mohamed Najhi" class="w-full h-full object-cover">
                     </div>
-                    <span class="absolute bottom-0 right-0 w-6 h-6 bg-yellow-500 border-2 border-gray-900 rounded-full animate-bounce" title="En test"></span>
+                    <span class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-gray-900 rounded-full animate-bounce" title="Approuvé"></span>
                 </div>
                 
                 <h2 class="text-2xl font-bold text-white mb-1">Mohamed Najhi</h2>
                 <p class="text-cyan-400 font-mono text-sm mb-4">ID: AGT-CYB-7742</p>
                 
-                <div class="w-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 rounded-lg py-2 px-4 mb-6 font-semibold tracking-wide">
-                    STATUT : EN MISSION TEST SUR TERRAIN
+                <div class="w-full bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg py-2 px-4 mb-6 font-semibold tracking-wide text-sm">
+                    STATUT : EMBAUCHE DÉFINITIVE VALIDÉE
                 </div>
 
                 <div class="w-full text-left space-y-3 text-sm">
                     <div class="flex justify-between border-b border-gray-700 pb-1">
-                        <span class="text-gray-400">Spécialité</span>
-                        <span class="text-white">Cyber Sécurité</span>
+                        <span class="text-gray-400">Poste</span>
+                        <span class="text-white font-bold">Opérateur Cyber-Tactique</span>
                     </div>
                     <div class="flex justify-between border-b border-gray-700 pb-1">
-                        <span class="text-gray-400">Localisation</span>
-                        <span class="text-white">Secteur Alpha</span>
+                        <span class="text-gray-400">Département</span>
+                        <span class="text-white">Cellule CMT</span>
                     </div>
                     <div class="flex justify-between border-b border-gray-700 pb-1">
-                        <span class="text-gray-400">Habilitation</span>
-                        <span class="text-white">Niveau 2 (Provisoire)</span>
+                        <span class="text-gray-400">Prise de fonction</span>
+                        <span class="text-cyan-400 font-bold">01/11/2026</span>
                     </div>
                 </div>
             </div>
@@ -125,15 +97,15 @@
             <!-- Colonne Droite : Analyse & Métriques -->
             <div class="md:col-span-2 space-y-6">
 
-                <!-- Compte à rebours dynamique -->
+                <!-- Compte à rebours dynamique mis à jour vers le 1er Novembre -->
                 <div class="glass-panel p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
                         <div class="bg-cyan-900/50 p-2.5 rounded-lg text-cyan-400">
                             <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                            <h4 class="text-xs text-gray-400 font-mono uppercase">Temps restant avant rapport final</h4>
-                            <span class="text-cyan-400 font-bold text-sm">Échéance : 08/10/2026</span>
+                            <h4 class="text-xs text-gray-400 font-mono uppercase">Temps restant avant prise de fonction</h4>
+                            <span class="text-cyan-400 font-bold text-sm">Déploiement Officiel : 01/11/2026</span>
                         </div>
                     </div>
                     <div id="countdown" class="flex gap-2 font-mono text-white text-sm">
@@ -148,7 +120,7 @@
                 <div class="glass-panel p-6 rounded-2xl">
                     <h3 class="text-lg font-semibold text-cyan-400 mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                        Capacités Analytiques
+                        Capacités Analytiques (Rapport Final)
                     </h3>
                     
                     <div class="space-y-4">
@@ -188,69 +160,88 @@
                             <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 55%"></div></div>
                         </div>
                     </div>
-                    
-                    <div class="mt-5 p-4 bg-blue-900/30 border-l-4 border-blue-500 rounded-r-lg">
-                        <h4 class="text-blue-400 font-bold text-sm mb-1">REMARQUE DE DÉVELOPPEMENT</h4>
-                        <p class="text-sm text-gray-300">L'agent doit impérativement développer son <strong class="text-white">âme de partage avec ses coéquipiers</strong>. L'individualisme freine la synergie du groupe en situation de crise cybernétique.</p>
-                    </div>
-                </div>
-
-                <!-- Alertes de Sécurité -->
-                <div class="glass-panel p-6 rounded-2xl border-red-500/30 alert-pulse relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">CRITIQUE</div>
-                    <h3 class="text-lg font-semibold text-red-500 mb-2 flex items-center gap-2">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        ALERTE COMPORTEMENTALE : VULNÉRABILITÉ IDENTIFIÉE
-                    </h3>
-                    <div class="bg-red-950/50 p-4 rounded-lg border border-red-900/50">
-                        <p class="text-sm text-red-200">
-                            <strong class="text-red-400 block mb-1">Rapport de surveillance :</strong>
-                            Des remarques sérieuses ont été remontées concernant des <span class="text-white font-bold bg-red-900 px-1 rounded">relations suspectes avec des meufs</span>. 
-                            <br><br>
-                            Ces interactions non vérifiées représentent une faille potentielle d'ingénierie sociale (Social Engineering). Le risque de compromission de données ou de manipulation lors des missions sur le terrain est considéré comme élevé. Un recadrage est exigé.
-                        </p>
-                    </div>
                 </div>
 
             </div>
 
-            <!-- Note d'embauche (Administration) -->
-            <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-purple-500 relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-purple-600/30 text-purple-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ADMINISTRATION</div>
+            <!-- NOUVEAU RAPPORT FINAL D'ÉVALUATION ET D'AFFECTATION -->
+            <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-green-500 relative overflow-hidden bg-green-950/10">
+                <div class="absolute top-0 right-0 bg-green-600/30 text-green-300 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> APPROUVÉ
+                </div>
                 <div class="flex items-start gap-4">
-                    <div class="bg-purple-900/50 p-3 rounded-lg text-purple-400 mt-1">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-purple-400 mb-2">NOTE : DÉCISION D'EMBAUCHE DÉFINITIVE</h3>
-                        <p class="text-gray-300 text-sm leading-relaxed">
-                            L'évaluation actuelle de la période de test est en cours de traitement. Le rapport final concernant l'embauche définitive de l'agent Mohamed Najhi sera délibéré et publié <strong class="text-white bg-purple-900/50 px-2 py-0.5 rounded border border-purple-500/30">entre le 05/10 et le 08/10</strong>. Toutes les remarques comportementales et analytiques ci-dessus seront prises en compte lors de cette commission.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dotation et Primes -->
-            <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-emerald-500 relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-2 shadow-lg shadow-orange-900/50">
-                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    ÉTAT : EN COURS
-                </div>
-                
-                <div class="flex items-start gap-4 mt-2">
-                    <div class="bg-emerald-900/50 p-3 rounded-lg text-emerald-400 mt-1">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    <div class="bg-green-900/50 p-3 rounded-lg text-green-400 mt-1">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div class="w-full">
-                        <h3 class="text-lg font-bold text-emerald-400 mb-4">AFFECTATION MATÉRIEL & RÉMUNÉRATION</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700 flex justify-between items-center">
-                                <span class="text-gray-400 text-sm">Dotation Technique Prévue</span>
-                                <span class="text-white font-bold font-mono">Ordinateur HP ZBook</span>
+                        <h3 class="text-xl font-bold text-green-400 mb-4 border-b border-green-800/50 pb-2">RAPPORT FINAL D'ÉVALUATION ET D'AFFECTATION</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 text-sm font-mono text-gray-300">
+                            <div>
+                                <p><span class="text-gray-500">RÉFÉRENCE DOSSIER :</span> B8-EVAL-2026-7742</p>
+                                <p><span class="text-gray-500">CONCERNANT :</span> Agent MOHAMED NAJHI</p>
                             </div>
-                            <div class="bg-gray-900/50 p-4 rounded border border-gray-700 flex justify-between items-center">
-                                <span class="text-gray-400 text-sm">Prime Accordée</span>
-                                <span class="text-emerald-400 font-bold font-mono text-lg">26 460 DH</span>
+                            <div>
+                                <p><span class="text-gray-500">MATRICULE :</span> AGT-CYB-7742</p>
+                                <p><span class="text-gray-500">SPÉCIALITÉ :</span> Cyber Sécurité & Renseignement</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6 text-sm text-gray-300">
+                            <!-- Section 1 -->
+                            <div>
+                                <h4 class="text-white font-bold mb-2 text-base">1. RÉSULTAT DE LA COMMISSION D'ÉVALUATION</h4>
+                                <p class="leading-relaxed mb-3">
+                                    Suite à la période de test sur le terrain clôturée le 08/10/2026, la commission de la Brigade 8, sous la supervision du Chef de Brigade Saber Aballagh, a délibéré concernant le profil de l'agent Mohamed Najhi.<br>
+                                    Malgré des vulnérabilités identifiées au niveau de la gestion du stress et du cercle social, les capacités analytiques (91%) et le taux d'intelligence (88%) démontrés par l'agent lors des simulations réseau justifient une intégration immédiate.
+                                </p>
+                                <p class="font-bold text-green-400 bg-green-950/60 p-2.5 rounded-lg border border-green-800/50 inline-block shadow-inner">
+                                    DÉCISION DU HAUT COMMANDEMENT : VALIDATION D'EMBAUCHE DÉFINITIVE.
+                                </p>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div>
+                                <h4 class="text-white font-bold mb-2 text-base">2. DÉTAILS DE L'AFFECTATION</h4>
+                                <ul class="list-disc list-inside space-y-1.5 ml-1">
+                                    <li><strong class="text-gray-400">Poste attribué :</strong> Opérateur Cyber-Tactique (Action Directe).</li>
+                                    <li><strong class="text-gray-400">Département :</strong> Cellule des Missions sur Terrain (CMT).</li>
+                                    <li><strong class="text-gray-400">Date d'embauche et de prise de fonction :</strong> <span class="text-cyan-400 font-bold">01/11/2026</span>.</li>
+                                    <li><strong class="text-gray-400">Dotation débloquée :</strong> Station de travail mobile HP ZBook.</li>
+                                    <li><strong class="text-gray-400">Prime de signature validée :</strong> 26 460 DH.</li>
+                                </ul>
+                            </div>
+
+                            <!-- Section 3 -->
+                            <div>
+                                <h4 class="text-white font-bold mb-2 text-base text-red-400">3. CONSIGNES STRICTES ET DIRECTIVES OPÉRATIONNELLES</h4>
+                                <p class="mb-3 italic text-gray-400">L'embauche de l'agent Mohamed Najhi est conditionnée par le respect absolu des consignes suivantes dès sa prise de poste le 01/11/2026 :</p>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-red-500 shadow-md">
+                                        <strong class="text-red-400 block mb-1">CONSIGNE ALPHA (Cercle Social) :</strong> 
+                                        L'agent a l'interdiction formelle et immédiate d'entrer en contact avec les 6 individus classés en "ROUGE" dans son rapport de sécurité (Mehdi Kamal, Yazid Tahir, Mourad Ouhammou, Yassin Soufiane, Abdelmouiz Mamouni, Ismail Achab). Toute violation entraînera une révocation de l'habilitation. Une vigilance accrue est exigée pour les contacts de niveau "ORANGE".
+                                    </div>
+                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-blue-500 shadow-md">
+                                        <strong class="text-blue-400 block mb-1">CONSIGNE BRAVO (Synergie d'Équipe) :</strong> 
+                                        L'agent sera déployé sur le terrain en binôme. Il est impératif qu'il développe son esprit de partage d'informations avec ses coéquipiers (notamment avec Soufiane Hadoui, Expert Intervention). L'individualisme ne sera plus toléré en situation de crise.
+                                    </div>
+                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-yellow-500 shadow-md">
+                                        <strong class="text-yellow-400 block mb-1">CONSIGNE CHARLIE (Comportemental) :</strong> 
+                                        Les relations externes suspectes signalées durant la phase de test (risque d'ingénierie sociale) feront l'objet d'un audit de routine hebdomadaire. L'agent doit maintenir une hygiène numérique et personnelle irréprochable.
+                                    </div>
+                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-cyan-500 shadow-md">
+                                        <strong class="text-cyan-400 block mb-1">CONSIGNE DELTA (Logistique) :</strong> 
+                                        L'agent est convoqué au département logistique (Ahmed Sajid) le 30/10/2026 pour récupérer sa dotation matérielle et configurer les accès cryptés de son HP ZBook avant son déploiement officiel du 1er Novembre.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Signature -->
+                            <div class="mt-6 text-right border-t border-gray-800 pt-4 text-xs font-mono text-gray-500">
+                                VALIDÉ PAR :<br>
+                                <span class="text-gray-400 font-bold">Haut Commandement de la Brigade 8</span><br>
+                                Cellule de Contre-Espionnage et Recrutement
                             </div>
                         </div>
                     </div>
@@ -522,13 +513,13 @@
                     <span class="text-xs font-mono text-gray-400 bg-gray-900 px-3 py-1 rounded border border-gray-700">Chiffrement E2E Actif</span>
                 </div>
 
-                <!-- Bandeau d'avertissement de lecture seule -->
+                <!-- Bandeau d'avertissement -->
                 <div class="bg-red-950/60 border border-red-500/40 text-red-400 text-xs font-mono p-3 rounded-lg mb-4 flex items-center gap-2">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    <span>ACCÈS OBSERVATEUR SEULEMENT : En tant qu'agent en période de test, vos droits d'émission sur ce canal sont suspendus par la hiérarchie.</span>
+                    <span>L'INTÉGRATION EST VALIDÉE POUR LE 01/11. EN ATTENDANT, VOS DROITS D'ÉMISSION RESTENT SUSPENDUS SUR CE CANAL.</span>
                 </div>
 
-                <!-- Fil de discussion très long (Missions techniques, terrain & Darija) -->
+                <!-- Fil de discussion très long -->
                 <div class="flex-1 overflow-y-auto space-y-4 pr-3 text-sm font-mono">
                     
                     <div class="text-center text-xs text-gray-500 my-2">— Début de la transmission tactique chiffrée —</div>
@@ -626,14 +617,14 @@
                             <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
                             <span>01:52</span>
                         </div>
-                        <p class="text-gray-300">Aya bslama, l'umur mzyana. Kol wahed y-bqa f poste dyalo. W b nisba l'sécurité interne w l'gestion dyal l'qadiya dyal la période de test, kan-tmana tkon l'amitié w l'khdma b jouj mzyanin. 3ndkom tnsaw l'objectif dyal l'brigade!</p>
+                        <p class="text-gray-300">Aya bslama, l'umur mzyana. Kol wahed y-bqa f poste dyalo. Mohamed vient d'être validé pour le 1er Novembre, l'équipe sera au complet. En attendant, on garde le rythme. Fin de transmission.</p>
                     </div>
 
                 </div>
 
                 <!-- Zone de saisie désactivée pour Mohamed -->
                 <div class="mt-4 pt-4 border-t border-gray-800 flex gap-2">
-                    <input type="text" disabled placeholder="Transmission interdite - Agent en période d'évaluation..." class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed">
+                    <input type="text" disabled placeholder="Transmission interdite - Affectation en attente (01/11/2026)..." class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed">
                     <button disabled class="bg-gray-800 text-gray-600 px-6 py-2.5 rounded-lg font-bold text-sm cursor-not-allowed">Envoyer</button>
                 </div>
 
@@ -708,14 +699,14 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Compte à rebours jusqu'au 8 octobre 2026
+        // Compte à rebours mis à jour vers le 1er Novembre 2026 (Prise de fonction)
         function updateCountdown() {
-            const targetDate = new Date('2026-10-08T23:59:59').getTime();
+            const targetDate = new Date('2026-11-01T08:00:00').getTime();
             const now = new Date().getTime();
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById('countdown').innerHTML = "<span class='text-red-400 font-bold'>DÉLIBÉRATION TERMINÉE</span>";
+                document.getElementById('countdown').innerHTML = "<span class='text-green-400 font-bold'>DÉPLOIEMENT ACTIF</span>";
                 return;
             }
 
