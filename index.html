@@ -7,7 +7,11 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#030712">
     
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         .glass-panel {
             background: rgba(17, 25, 40, 0.75);
@@ -25,6 +29,13 @@
         .alert-pulse { animation: pulse-red 2s infinite; }
         @keyframes progress { from { width: 0; } }
         .progress-bar { animation: progress 1.5s ease-out forwards; }
+
+        @media print {
+            header, button, #cli-container, .tab-buttons, #tab-brigade, #tab-social, #tab-comms { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .glass-panel { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; }
+            .text-white, .text-gray-200, .text-gray-300, .text-cyan-400 { color: black !important; }
+        }
     </style>
 </head>
 <body id="app-body" class="bg-gray-950 text-gray-200 min-h-screen font-sans bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pb-10 transition-colors duration-500">
@@ -37,12 +48,12 @@
             <div class="flex items-center gap-3">
                 <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]" id="status-dot"></div>
                 <h1 class="text-xl font-bold tracking-widest text-cyan-400" id="header-title">
-                    BRIGADE 8 <span class="text-gray-500 text-sm hidden md:inline">| SYSTÈME D'ÉVALUATION</span>
+                    BRIGADE 8 <span class="text-gray-500 text-sm hidden md:inline">| QG D'ÉVALUATION TACTIQUE</span>
                 </h1>
             </div>
         </div>
 
-        <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1">
+        <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1 tab-buttons">
             <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
             <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif Brigade</button>
             <button onclick="switchTab('social')" id="tab-btn-social" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
@@ -50,6 +61,10 @@
         </div>
 
         <div class="flex items-center gap-3">
+            <button onclick="exportPDF()" class="bg-emerald-950 hover:bg-emerald-900 text-emerald-400 border border-emerald-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                PDF
+            </button>
             <button onclick="toggleRedAlert()" id="alert-btn" class="bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md">
                 🚨 MODE ALERTE
             </button>
@@ -57,39 +72,59 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto p-6">
+    <main class="max-w-6xl mx-auto p-6 space-y-6">
 
         <!-- ================= ONGLET 1 : DASHBOARD PRINCIPAL ================= -->
         <div id="tab-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6 tab-content">
 
             <!-- Colonne Gauche : Profil -->
-            <div class="glass-panel p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit">
-                <div class="relative mb-4">
+            <div class="glass-panel p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit space-y-4">
+                <div class="relative">
                     <div class="w-32 h-32 rounded-full bg-gray-800 border-4 border-green-500 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(34,197,94,0.3)]">
                         <img src="https://i.postimg.cc/njgSbCvM/file-000000000ac881f4a1d6222e2e266d76.png" alt="Photo de Mohamed Najhi" class="w-full h-full object-cover">
                     </div>
                     <span class="absolute bottom-0 right-0 w-6 h-6 bg-green-500 border-2 border-gray-900 rounded-full animate-bounce" title="Approuvé"></span>
                 </div>
                 
-                <h2 class="text-2xl font-bold text-white mb-1">Mohamed Najhi</h2>
-                <p class="text-cyan-400 font-mono text-sm mb-4">ID: AGT-CYB-7742</p>
+                <div>
+                    <h2 class="text-2xl font-bold text-white mb-1">Mohamed Najhi</h2>
+                    <p class="text-cyan-400 font-mono text-sm">ID: AGT-CYB-7742</p>
+                </div>
                 
-                <div class="w-full bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg py-2 px-4 mb-6 font-semibold tracking-wide text-sm">
+                <div class="w-full bg-green-500/20 text-green-400 border border-green-500/50 rounded-lg py-2 px-4 font-semibold tracking-wide text-sm">
                     STATUT : EMBAUCHE DÉFINITIVE VALIDÉE
                 </div>
 
-                <div class="w-full text-left space-y-3 text-sm">
-                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                <div class="w-full text-left space-y-3 text-sm pt-2 border-t border-gray-800">
+                    <div class="flex justify-between border-b border-gray-800 pb-1">
                         <span class="text-gray-400">Poste</span>
                         <span class="text-white font-bold">Opérateur Cyber-Tactique</span>
                     </div>
-                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                    <div class="flex justify-between border-b border-gray-800 pb-1">
                         <span class="text-gray-400">Département</span>
                         <span class="text-white">Cellule CMT</span>
                     </div>
-                    <div class="flex justify-between border-b border-gray-700 pb-1">
+                    <div class="flex justify-between border-b border-gray-800 pb-1">
                         <span class="text-gray-400">Prise de fonction</span>
                         <span class="text-cyan-400 font-bold">01/11/2026</span>
+                    </div>
+                </div>
+
+                <!-- Jauge Stress / Burnout -->
+                <div class="w-full pt-4 border-t border-gray-800">
+                    <h4 class="text-xs font-mono uppercase text-gray-400 mb-2">Pression & Charge Mentale</h4>
+                    <div class="flex items-center justify-center gap-4">
+                        <div class="relative w-20 h-20 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                <path class="text-gray-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="text-yellow-400" stroke-width="3.5" stroke-dasharray="35, 100" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <span class="absolute text-sm font-bold font-mono text-yellow-400">35%</span>
+                        </div>
+                        <div class="text-left text-xs font-mono space-y-1">
+                            <span class="block text-green-400 font-bold">● Éléments sous contrôle</span>
+                            <span class="block text-gray-400">Seuil critique : 80%</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,7 +132,7 @@
             <!-- Colonne Droite : Analyse & Métriques -->
             <div class="md:col-span-2 space-y-6">
 
-                <!-- Compte à rebours dynamique mis à jour vers le 1er Novembre -->
+                <!-- Compte à rebours -->
                 <div class="glass-panel p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-3">
                         <div class="bg-cyan-900/50 p-2.5 rounded-lg text-cyan-400">
@@ -115,6 +150,39 @@
                         <div class="bg-gray-900 px-2.5 py-1 rounded border border-gray-700"><span id="seconds">00</span>s</div>
                     </div>
                 </div>
+
+                <!-- Radar Chart + Métriques -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Graphique Radar -->
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col items-center justify-center">
+                        <h4 class="text-xs font-mono uppercase text-cyan-400 mb-2">Cartographie des Compétences</h4>
+                        <div class="w-full max-w-[240px] h-[220px]">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Timeline progression -->
+                    <div class="glass-panel p-4 rounded-2xl flex flex-col justify-between">
+                        <h4 class="text-xs font-mono uppercase text-yellow-400 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            Historique d'Évolution
+                        </h4>
+                        <div class="space-y-3 text-xs font-mono">
+                            <div class="border-l-2 border-red-500 pl-3">
+                                <span class="text-gray-500 block">Juillet 2026</span>
+                                <span class="text-red-400 font-semibold">Cercle Social : 45% (Vulnérable)</span>
+                            </div>
+                            <div class="border-l-2 border-yellow-500 pl-3">
+                                <span class="text-gray-500 block">Septembre 2026</span>
+                                <span class="text-yellow-400 font-semibold">Gestion du Stress : 65% (Progression)</span>
+                            </div>
+                            <div class="border-l-2 border-green-500 pl-3">
+                                <span class="text-gray-500 block">Octobre 2026</span>
+                                <span class="text-green-400 font-semibold">Score Global Validé : 84%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Compétences Cognitives -->
                 <div class="glass-panel p-6 rounded-2xl">
@@ -125,46 +193,75 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux d'Intelligence</span><span class="text-cyan-400">88%</span></div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux d'Intelligence</span><span class="text-cyan-400 font-bold font-mono">88%</span></div>
                             <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full progress-bar" style="width: 88%"></div></div>
                         </div>
                         <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux de Réflexions</span><span class="text-cyan-400">82%</span></div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux de Réflexions</span><span class="text-cyan-400 font-bold font-mono">82%</span></div>
                             <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full progress-bar" style="width: 82%"></div></div>
                         </div>
                         <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux d'Analyses</span><span class="text-cyan-400">91%</span></div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Taux d'Analyses</span><span class="text-cyan-400 font-bold font-mono">91%</span></div>
                             <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-cyan-500 h-2 rounded-full progress-bar" style="width: 91%"></div></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Facteurs Sociaux & Gestion -->
-                <div class="glass-panel p-6 rounded-2xl">
-                    <h3 class="text-lg font-semibold text-yellow-400 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                        Profil Comportemental & Facteurs à Développer
-                    </h3>
+                <!-- Profil Comportemental & Facteurs à Développer -->
+                <div class="glass-panel p-6 rounded-2xl border border-yellow-500/20 shadow-lg space-y-5">
+                    <div class="flex justify-between items-center pb-3 border-b border-gray-800/80 flex-wrap gap-2">
+                        <h3 class="text-lg font-semibold text-yellow-400 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            Profil Comportemental & Facteurs à Développer
+                        </h3>
+                        <span class="text-xs font-mono bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2.5 py-1 rounded-md">
+                            Score Global : <strong class="text-white">84%</strong>
+                        </span>
+                    </div>
                     
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Relation Sociale</span><span class="text-yellow-400">45%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 45%"></div></div>
+                    <div class="space-y-5">
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300 font-medium">Relation Sociale</span>
+                                <span class="text-yellow-400 font-bold font-mono text-sm">78%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 rounded-full h-2.5 p-0.5 border border-gray-800">
+                                <div class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-1.5 rounded-full progress-bar" style="width: 78%"></div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Relation Familiale</span><span class="text-yellow-400">50%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 50%"></div></div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300 font-medium">Relation Familiale</span>
+                                <span class="text-green-400 font-bold font-mono text-sm">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 rounded-full h-2.5 p-0.5 border border-gray-800">
+                                <div class="bg-gradient-to-r from-emerald-600 to-green-400 h-1.5 rounded-full progress-bar" style="width: 85%"></div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">La Gestion (Stress/Ressources)</span><span class="text-yellow-400">55%</span></div>
-                            <div class="w-full bg-gray-800 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full progress-bar" style="width: 55%"></div></div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-300 font-medium">La Gestion (Stress / Ressources)</span>
+                                <span class="text-green-400 font-bold font-mono text-sm">88%</span>
+                            </div>
+                            <div class="w-full bg-gray-900 rounded-full h-2.5 p-0.5 border border-gray-800">
+                                <div class="bg-gradient-to-r from-emerald-600 to-green-400 h-1.5 rounded-full progress-bar" style="width: 88%"></div>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="mt-4 p-3 rounded-xl bg-gray-900/60 border border-gray-800/80 text-xs text-gray-400 flex items-start gap-2">
+                        <svg class="w-4 h-4 text-green-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>
+                            <strong class="text-gray-300">Synthèse du Suivi :</strong> Les indicateurs comportementaux montrent une nette évolution positive suite aux dernières sessions de préparation (cf. Consignes Alpha & Bravo).
+                        </span>
                     </div>
                 </div>
 
             </div>
 
-            <!-- NOUVEAU RAPPORT FINAL D'ÉVALUATION ET D'AFFECTATION -->
+            <!-- RAPPORT FINAL D'ÉVALUATION ET D'AFFECTATION (AVEC NOTE OFFICIELLE INTÉGRÉE) -->
             <div class="glass-panel p-6 rounded-2xl md:col-span-3 border-l-4 border-green-500 relative overflow-hidden bg-green-950/10">
                 <div class="absolute top-0 right-0 bg-green-600/30 text-green-300 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span> APPROUVÉ
@@ -188,60 +285,35 @@
                         </div>
 
                         <div class="space-y-6 text-sm text-gray-300">
-                            <!-- Section 1 -->
                             <div>
                                 <h4 class="text-white font-bold mb-2 text-base">1. RÉSULTAT DE LA COMMISSION D'ÉVALUATION</h4>
                                 <p class="leading-relaxed mb-3">
                                     Suite à la période de test sur le terrain clôturée le 08/10/2026, la commission de la Brigade 8, sous la supervision du Chef de Brigade Saber Aballagh, a délibéré concernant le profil de l'agent Mohamed Najhi.<br>
-                                    Malgré des vulnérabilités identifiées au niveau de la gestion du stress et du cercle social, les capacités analytiques (91%) et le taux d'intelligence (88%) démontrés par l'agent lors des simulations réseau justifient une intégration immédiate.
+                                    Les capacités analytiques (91%) et le taux d'intelligence (88%) démontrés par l'agent lors des simulations réseau justifient une intégration immédiate.
                                 </p>
                                 <p class="font-bold text-green-400 bg-green-950/60 p-2.5 rounded-lg border border-green-800/50 inline-block shadow-inner">
                                     DÉCISION DU HAUT COMMANDEMENT : VALIDATION D'EMBAUCHE DÉFINITIVE.
                                 </p>
                             </div>
 
-                            <!-- Section 2 -->
+                            <!-- Note Officielle Demandée -->
+                            <div class="bg-cyan-950/40 p-4 rounded-xl border border-cyan-500/40 space-y-2">
+                                <h4 class="text-cyan-400 font-bold text-base flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    NOTE OFFICIELLE DU HAUT COMMANDEMENT
+                                </h4>
+                                <p class="leading-relaxed text-gray-200">
+                                    L'agent <strong>Mohamed Najhi</strong> est officiellement intégré dans la Brigade 8. Il va recevoir sa prime et le PC portable <strong>Z Book</strong> une fois que la commission du Haut Commandement aura accordé la prime et le matériel. Les missions et les tâches à faire vont apparaître sur l'application très prochainement.
+                                </p>
+                            </div>
+
                             <div>
                                 <h4 class="text-white font-bold mb-2 text-base">2. DÉTAILS DE L'AFFECTATION</h4>
                                 <ul class="list-disc list-inside space-y-1.5 ml-1">
                                     <li><strong class="text-gray-400">Poste attribué :</strong> Opérateur Cyber-Tactique (Action Directe).</li>
                                     <li><strong class="text-gray-400">Département :</strong> Cellule des Missions sur Terrain (CMT).</li>
                                     <li><strong class="text-gray-400">Date d'embauche et de prise de fonction :</strong> <span class="text-cyan-400 font-bold">01/11/2026</span>.</li>
-                                    <li><strong class="text-gray-400">Dotation débloquée :</strong> Station de travail mobile HP ZBook.</li>
-                                    <li><strong class="text-gray-400">Prime de signature validée :</strong> 26 460 DH.</li>
                                 </ul>
-                            </div>
-
-                            <!-- Section 3 -->
-                            <div>
-                                <h4 class="text-white font-bold mb-2 text-base text-red-400">3. CONSIGNES STRICTES ET DIRECTIVES OPÉRATIONNELLES</h4>
-                                <p class="mb-3 italic text-gray-400">L'embauche de l'agent Mohamed Najhi est conditionnée par le respect absolu des consignes suivantes dès sa prise de poste le 01/11/2026 :</p>
-                                
-                                <div class="space-y-3">
-                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-red-500 shadow-md">
-                                        <strong class="text-red-400 block mb-1">CONSIGNE ALPHA (Cercle Social) :</strong> 
-                                        L'agent a l'interdiction formelle et immédiate d'entrer en contact avec les 6 individus classés en "ROUGE" dans son rapport de sécurité (Mehdi Kamal, Yazid Tahir, Mourad Ouhammou, Yassin Soufiane, Abdelmouiz Mamouni, Ismail Achab). Toute violation entraînera une révocation de l'habilitation. Une vigilance accrue est exigée pour les contacts de niveau "ORANGE".
-                                    </div>
-                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-blue-500 shadow-md">
-                                        <strong class="text-blue-400 block mb-1">CONSIGNE BRAVO (Synergie d'Équipe) :</strong> 
-                                        L'agent sera déployé sur le terrain en binôme. Il est impératif qu'il développe son esprit de partage d'informations avec ses coéquipiers (notamment avec Soufiane Hadoui, Expert Intervention). L'individualisme ne sera plus toléré en situation de crise.
-                                    </div>
-                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-yellow-500 shadow-md">
-                                        <strong class="text-yellow-400 block mb-1">CONSIGNE CHARLIE (Comportemental) :</strong> 
-                                        Les relations externes suspectes signalées durant la phase de test (risque d'ingénierie sociale) feront l'objet d'un audit de routine hebdomadaire. L'agent doit maintenir une hygiène numérique et personnelle irréprochable.
-                                    </div>
-                                    <div class="bg-gray-900/60 p-3 rounded-lg border-l-4 border-cyan-500 shadow-md">
-                                        <strong class="text-cyan-400 block mb-1">CONSIGNE DELTA (Logistique) :</strong> 
-                                        L'agent est convoqué au département logistique (Ahmed Sajid) le 30/10/2026 pour récupérer sa dotation matérielle et configurer les accès cryptés de son HP ZBook avant son déploiement officiel du 1er Novembre.
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Signature -->
-                            <div class="mt-6 text-right border-t border-gray-800 pt-4 text-xs font-mono text-gray-500">
-                                VALIDÉ PAR :<br>
-                                <span class="text-gray-400 font-bold">Haut Commandement de la Brigade 8</span><br>
-                                Cellule de Contre-Espionnage et Recrutement
                             </div>
                         </div>
                     </div>
@@ -251,7 +323,7 @@
         </div>
 
 
-        <!-- ================= ONGLET 2 : EFFECTIF BRIGADE ================= -->
+        <!-- ================= ONGLET 2 : EFFECTIF BRIGADE (TOUS LES AGENTS) ================= -->
         <div id="tab-brigade" class="hidden space-y-6 tab-content">
             <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ORGANIGRAMME</div>
@@ -262,108 +334,55 @@
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-cyan-400">EFFECTIF DE LA BRIGADE 8 - HIÉRARCHIE DES AGENTS</h3>
-                            <p class="text-gray-400 text-sm">Cliquez sur un agent pour afficher sa fiche tactique et ses missions.</p>
+                            <h3 class="text-lg font-bold text-cyan-400">EFFECTIF COMPLET DE LA BRIGADE 8</h3>
+                            <p class="text-gray-400 text-sm">Cliquez sur un agent pour afficher sa fiche tactique.</p>
                         </div>
                     </div>
-                    <!-- Barre de recherche -->
                     <div class="w-full md:w-72">
                         <input type="text" id="agent-search" placeholder="Rechercher un coéquipier..." onkeyup="filterAgents()" class="w-full bg-gray-900/80 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500">
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="agents-grid">
-                    
-                    <!-- Saber Aballagh -->
-                    <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8, validation des stratégies de cybersécurité et arbitrage des rapports de terrain.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center shadow-md cursor-pointer hover:bg-cyan-950/40 transition-all">
-                        <div>
-                            <span class="block text-white font-bold agent-name">Saber Aballagh</span>
-                            <span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span>
-                        </div>
-                        <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-cyan-500/30">Niv. 16</span>
+                    <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-cyan-950/40 transition-all">
+                        <div><span class="text-white font-bold agent-name block">Saber Aballagh</span><span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span></div>
+                        <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">Niv. 16</span>
                     </div>
 
-                    <!-- Anis Salmi -->
-                    <div onclick="openAgentModal('Anis Salmi', 'Opérateur Senior', 'Niveau 11', 'Analyse Réseau & Sécurité Périmétrique', 'Audit des passerelles réseau, traçage des intrusions et sécurisation des flux de données sensibles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Anis Salmi</span>
-                            <span class="text-xs text-gray-400">Opérateur Senior</span>
-                        </div>
-                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                    <div onclick="openAgentModal('Anis Salmi', 'Opérateur Senior', 'Niveau 11', 'Analyse Réseau & Sécurité Périmétrique', 'Audit des passerelles réseau.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Anis Salmi</span><span class="text-xs text-gray-400">Opérateur Senior</span></div>
+                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
-                    <!-- Chaimaa Benzakri -->
-                    <div onclick="openAgentModal('Chaimaa Benzakri', 'Analyste Cybersécurité', 'Niveau 11', 'Cryptographie & Ingénierie Inverse', 'Analyse de code malveillant, rétro-ingénierie (reverse engineering) des scripts suspects et cryptographie.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Chaimaa Benzakri</span>
-                            <span class="text-xs text-gray-400">Analyste Cybersécurité</span>
-                        </div>
-                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                    <div onclick="openAgentModal('Chaimaa Benzakri', 'Analyste Cybersécurité', 'Niveau 11', 'Cryptographie & Ingénierie Inverse', 'Reverse engineering.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Chaimaa Benzakri</span><span class="text-xs text-gray-400">Analyste Cybersécurité</span></div>
+                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
-                    <!-- Soufiane Hadoui -->
-                    <div onclick="openAgentModal('Soufiane Hadoui', 'Expert Intervention Terrain', 'Niveau 11', 'Sécurité des Systèmes Embarqués', 'Intervention rapide sur site, sécurisation physique des terminaux et neutralisation des failles matérielles.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Soufiane Hadoui</span>
-                            <span class="text-xs text-gray-400">Expert Intervention</span>
-                        </div>
-                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-blue-500/30">Niv. 11</span>
+                    <div onclick="openAgentModal('Soufiane Hadoui', 'Expert Intervention Terrain', 'Niveau 11', 'Sécurité des Systèmes Embarqués', 'Intervention rapide.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Soufiane Hadoui</span><span class="text-xs text-gray-400">Expert Intervention</span></div>
+                        <span class="bg-blue-500/20 text-blue-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-blue-500/30">Niv. 11</span>
                     </div>
 
-                    <!-- Akram Belfqih -->
-                    <div onclick="openAgentModal('Akram Belfqih', 'Agent Tactique', 'Niveau 10', 'Surveillance & Traitement de Flux', 'Surveillance active des pare-feu (Firewalls) et filtrage des paquets de données en temps réel.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Akram Belfqih</span>
-                            <span class="text-xs text-gray-400">Agent Tactique</span>
-                        </div>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
+                    <div onclick="openAgentModal('Akram Belfqih', 'Agent Tactique', 'Niveau 10', 'Surveillance & Traitement de Flux', 'Firewalls.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Akram Belfqih</span><span class="text-xs text-gray-400">Agent Tactique</span></div>
+                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-gray-600">Niv. 10</span>
                     </div>
 
-                    <!-- Ali Benchamssi -->
-                    <div onclick="openAgentModal('Ali Benchamssi', 'Agent Spécialisé', 'Niveau 10', 'Sécurité des Données & Sauvegardes', 'Gestion des protocoles de sauvegarde des bases de données et intégrité des archives de la brigade.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Ali Benchamssi</span>
-                            <span class="text-xs text-gray-400">Agent Spécialisé</span>
-                        </div>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 10</span>
+                    <div onclick="openAgentModal('Ali Benchamssi', 'Agent Spécialisé', 'Niveau 10', 'Sécurité des Données & Sauvegardes', 'Sauvegardes.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Ali Benchamssi</span><span class="text-xs text-gray-400">Agent Spécialisé</span></div>
+                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-gray-600">Niv. 10</span>
                     </div>
 
-                    <!-- Wissal Asbahi -->
-                    <div onclick="openAgentModal('Wissal Asbahi', 'Analyste Junior', 'Niveau 09', 'Surveillance des Logs & Alertes', 'Analyse des journaux d’événements (Logs) et détection précoce des signaux faibles d’attaque.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Wissal Asbahi</span>
-                            <span class="text-xs text-gray-400">Analyste Junior</span>
-                        </div>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 09</span>
+                    <div onclick="openAgentModal('Wissal Asbahi', 'Analyste Junior', 'Niveau 09', 'Surveillance des Logs & Alertes', 'Logs SIEM.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Wissal Asbahi</span><span class="text-xs text-gray-400">Analyste Junior</span></div>
+                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-gray-600">Niv. 09</span>
                     </div>
 
-                    <!-- Ahmed Sajid -->
-                    <div onclick="openAgentModal('Ahmed Sajid', 'Agent Support', 'Niveau 08', 'Maintenance Technique & Hardware', 'Support technique des postes de travail, maintenance des équipements et déploiement logistique.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Ahmed Sajid</span>
-                            <span class="text-xs text-gray-400">Agent Support</span>
-                        </div>
-                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-600">Niv. 08</span>
+                    <div onclick="openAgentModal('Ahmed Sajid', 'Agent Support', 'Niveau 08', 'Maintenance Technique & Hardware', 'Matériel & Support.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                        <div><span class="text-gray-200 font-medium agent-name block">Ahmed Sajid</span><span class="text-xs text-gray-400">Agent Support</span></div>
+                        <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-gray-600">Niv. 08</span>
                     </div>
-
-                    <!-- Karim Chakhsi -->
-                    <div onclick="openAgentModal('Karim Chakhsi', 'Stagiaire Terrain', 'Niveau 05', 'Phase d\'Apprentissage & Renseignement', 'Apprentissage des procédures de contre-espionnage et assistance aux enquêtes d’ingénierie sociale.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Karim Chakhsi</span>
-                            <span class="text-xs text-gray-400">Stagiaire Terrain</span>
-                        </div>
-                        <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 05</span>
-                    </div>
-
-                    <!-- Rayane Bourachdi -->
-                    <div onclick="openAgentModal('Rayane Bourachdi', 'Cadre en Formation', 'Niveau 04', 'Initiation aux Protocoles de Sécurité', 'Initiation aux bases de données de sécurité et simulation d’attaques contrôlées (Red Teaming de base).')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
-                        <div>
-                            <span class="text-gray-200 font-medium agent-name">Rayane Bourachdi</span>
-                            <span class="text-xs text-gray-400">Cadre en Formation</span>
-                        </div>
-                        <span class="bg-gray-800 text-gray-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-gray-700">Niv. 04</span>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -371,263 +390,102 @@
 
         <!-- ================= ONGLET 3 : CERCLE SOCIAL ================= -->
         <div id="tab-social" class="hidden space-y-6 tab-content">
-            
             <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 relative overflow-hidden bg-cyan-950/20">
                 <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">NOTE DE SÉCURITÉ</div>
-                <div class="flex items-start gap-4">
-                    <div class="bg-cyan-900/50 p-3 rounded-lg text-cyan-400 mt-1">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-cyan-400 mb-2">SURVEILLANCE DU CERCLE SOCIAL DE MOHAMED</h3>
-                        <p class="text-gray-300 text-sm leading-relaxed mb-3">
-                            Ce module répertorie l'analyse comportementale et relationnelle de l'agent. Le répertoire est mis à jour et audité <strong class="text-white bg-cyan-900/50 px-2 py-0.5 rounded border border-cyan-500/30">chaque deux semaines</strong> par la cellule de contre-espionnage de la Brigade 8.
-                        </p>
-                        <div class="flex flex-wrap gap-4 text-xs font-mono">
-                            <span class="flex items-center gap-1.5 bg-red-950/80 text-red-400 px-3 py-1.5 rounded-md border border-red-800"><span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span> ROUGE : Risque critique - Interdiction absolue de contact</span>
-                            <span class="flex items-center gap-1.5 bg-orange-950/80 text-orange-400 px-3 py-1.5 rounded-md border border-orange-800"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> ORANGE : Vigilance requise - Attention aux interactions</span>
-                            <span class="flex items-center gap-1.5 bg-emerald-950/80 text-emerald-400 px-3 py-1.5 rounded-md border border-emerald-800"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> VERT : Zone sûre - Aucune anomalie détectée</span>
-                        </div>
-                    </div>
+                <h3 class="text-lg font-bold text-cyan-400 mb-2">SURVEILLANCE DU CERCLE SOCIAL DE MOHAMED</h3>
+                <p class="text-gray-300 text-sm mb-4">Répertoire audité chaque deux semaines par la cellule de contre-espionnage de la Brigade 8.</p>
+                
+                <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-800">
+                    <button onclick="filterSocial('ALL')" class="px-3 py-1 rounded text-xs font-mono font-bold bg-cyan-600 text-white">TOUS</button>
+                    <button onclick="filterSocial('ROUGE')" class="px-3 py-1 rounded text-xs font-mono font-bold bg-red-950/80 text-red-400 border border-red-800 hover:bg-red-900">ROUGE</button>
+                    <button onclick="filterSocial('ORANGE')" class="px-3 py-1 rounded text-xs font-mono font-bold bg-orange-950/80 text-orange-400 border border-orange-800 hover:bg-orange-900">ORANGE</button>
+                    <button onclick="filterSocial('VERT')" class="px-3 py-1 rounded text-xs font-mono font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800 hover:bg-emerald-900">VERT</button>
                 </div>
             </div>
 
-            <!-- Grille du cercle social -->
             <div class="glass-panel p-6 rounded-2xl space-y-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-lg font-bold text-white">RÉPERTOIRE DES RELATIONS</h3>
-                    <span class="text-xs text-gray-400 font-mono">Dernière synchro : Octobre 2026</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    
-                    <!-- ROUGES -->
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="social-grid">
+                    <div onclick="openSocialModal('Mehdi Kamal', 'ROUGE', 'Ingénierie Sociale', 'Suspecté d’approches répétées.')" class="social-card ROUGE bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-red-900/40">
                         <span class="text-white font-medium">Mehdi Kamal</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
+                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40">ROUGE</span>
                     </div>
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                    <div onclick="openSocialModal('Yazid Tahir', 'ROUGE', 'Surveillance Active', 'Liaisons indirectes suspectes.')" class="social-card ROUGE bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-red-900/40">
                         <span class="text-white font-medium">Yazid Tahir</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
+                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40">ROUGE</span>
                     </div>
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                    <div onclick="openSocialModal('Mourad Ouhammou', 'ROUGE', 'Renseignement Externe', 'Interactions non autorisées.')" class="social-card ROUGE bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-red-900/40">
                         <span class="text-white font-medium">Mourad Ouhammou</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
+                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40">ROUGE</span>
                     </div>
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Yassin Soufiane</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
-                    </div>
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Abdelmouiz Mamouni</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
-                    </div>
-                    <div class="bg-red-950/30 border border-red-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Ismail Achab</span>
-                        <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-red-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> ROUGE</span>
-                    </div>
-
-                    <!-- ORANGES -->
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                    <div onclick="openSocialModal('Elkharaoubi', 'ORANGE', 'Vigilance Routine', 'Flux de communication irréguliers.')" class="social-card ORANGE bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-orange-900/40">
                         <span class="text-white font-medium">Elkharaoubi</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
+                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40">ORANGE</span>
                     </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                    <div onclick="openSocialModal('Achraf Essemyhy', 'ORANGE', 'Vigilance Routine', 'Contacts fréquents lors des loisirs.')" class="social-card ORANGE bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-orange-900/40">
                         <span class="text-white font-medium">Achraf Essemyhy</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
+                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40">ORANGE</span>
                     </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Rihab Bensalem</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Anass Wild</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Nihal Bouasl</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Walid Necro</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Hamza Jamali</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Amine Bakare</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Alae El</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Oualid El Harroussi</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Islam Rached</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Mhamed Youssfi</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-                    <div class="bg-orange-950/30 border border-orange-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Marouane</span>
-                        <span class="bg-orange-500/20 text-orange-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-orange-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> ORANGE</span>
-                    </div>
-
-                    <!-- VERTS -->
-                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
+                    <div onclick="openSocialModal('Ayoub Aloui', 'VERT', 'Zone Sûre', 'Membre certifié et audité.')" class="social-card VERT bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-emerald-900/40">
                         <span class="text-white font-medium">Ayoub Aloui</span>
-                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
+                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40">VERT</span>
                     </div>
-                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Ahmed Benhessou</span>
-                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
-                    </div>
-                    <div class="bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center">
-                        <span class="text-white font-medium">Adam Boumkouk</span>
-                        <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> VERT</span>
-                    </div>
-
                 </div>
             </div>
-
         </div>
 
-        <!-- ================= ONGLET 4 : CANAL SÉCURISÉ (DISCUSSION LONGUE AVEC DARIJA) ================= -->
+
+        <!-- ================= ONGLET 4 : CANAL SÉCURISÉ ================= -->
         <div id="tab-comms" class="hidden tab-content">
-            <div class="glass-panel p-6 rounded-2xl flex flex-col h-[650px]">
+            <div class="glass-panel p-6 rounded-2xl flex flex-col h-[700px]">
                 
-                <!-- En-tête du canal -->
                 <div class="flex justify-between items-center pb-4 mb-4 border-b border-gray-800 flex-wrap gap-2">
                     <div class="flex items-center gap-3">
                         <div class="w-3 h-3 bg-cyan-500 rounded-full animate-pulse"></div>
                         <h2 class="text-lg font-bold text-cyan-400">CANAL INTERNE B8 (RESTREINT - HORS MOHAMED NAJHI)</h2>
                     </div>
-                    <span class="text-xs font-mono text-gray-400 bg-gray-900 px-3 py-1 rounded border border-gray-700">Chiffrement E2E Actif</span>
-                </div>
-
-                <!-- Bandeau d'avertissement -->
-                <div class="bg-red-950/60 border border-red-500/40 text-red-400 text-xs font-mono p-3 rounded-lg mb-4 flex items-center gap-2">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    <span>L'INTÉGRATION EST VALIDÉE POUR LE 01/11. EN ATTENDANT, VOS DROITS D'ÉMISSION RESTENT SUSPENDUS SUR CE CANAL.</span>
-                </div>
-
-                <!-- Fil de discussion très long -->
-                <div class="flex-1 overflow-y-auto space-y-4 pr-3 text-sm font-mono">
                     
-                    <div class="text-center text-xs text-gray-500 my-2">— Début de la transmission tactique chiffrée —</div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
-                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
-                            <span>01:15</span>
-                        </div>
-                        <p class="text-gray-300">L'équipe, salam 3likoum. On a une double opération cette nuit. D'un côté l'audit et le reverse engineering des serveurs, de l'autre l'intervention physique sur le terrain. Anis, wesh bditi l'analyse dyal traffic ?</p>
+                    <div class="w-full sm:w-64">
+                        <input type="text" id="chat-search" onkeyup="searchChat()" placeholder="Rechercher dans les messages..." class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono">
                     </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-blue-400 mb-1">
-                            <span class="font-bold">Anis Salmi (Opérateur Senior)</span>
-                            <span>01:18</span>
-                        </div>
-                        <p class="text-gray-300">Walo labas Chef, kolchi f control. 3ndi daba tracking dyal les paquets TCP/IP. Kayn wahed l'IP mchouha kat7awel tdir Brute Force 3la les ports dyalna men 3chiyya hadi.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-purple-400 mb-1">
-                            <span class="font-bold">Chaimaa Benzakri (Analyste Cybersécurité)</span>
-                            <span>01:22</span>
-                        </div>
-                        <p class="text-gray-300">Ana f sandbox daba kandidate l'analyse dyal dak l'exécutable. 3ndou payload mskhoun bzaf, kay-tenta y-bpassi l'antivirus w y-dir exfiltration l'database dyalna. Ila ma drnarihch patch f a9rab waqt radi yjiwna fihom f zher.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
-                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
-                            <span>01:25</span>
-                        </div>
-                        <p class="text-gray-300">Chaimaa, dirili isolation tamma lil sandbox. Matkhalliha tconnecta la 3la LAN la 3la WAN. Khdmi b l'ISO offline.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-emerald-400 mb-1">
-                            <span class="font-bold">Soufiane Hadoui (Expert Intervention)</span>
-                            <span>01:30</span>
-                        </div>
-                        <p class="text-gray-300">Chef, ana daba woselt l'makan dyal l'opération sur terrain. L'bâtiment ghir zado fih la sécurité, mais l'porte de service arrière mkhaddma b badge RFID qdim. 3ndi l'cloner dyali wajed.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-yellow-400 mb-1">
-                            <span class="font-bold">Ahmed Sajid (Agent Support)</span>
-                            <span>01:32</span>
-                        </div>
-                        <p class="text-gray-300">Soufiane, radibalek men l'caméra li foq l'bab!rah fiha motion detector w night vision. Dir 3la yassrek w tkhabba wra l'colonne 3ad swipi l'badge.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-emerald-400 mb-1">
-                            <span class="font-bold">Soufiane Hadoui (Expert Intervention)</span>
-                            <span>01:35</span>
-                        </div>
-                        <p class="text-gray-300">Safe, tpassit l'caméra b najaḥ! Dkholna l'dakhel, daba f salla dyal les serveurs (Server Room). L'jaw bared bzaf w les rack kat-clignoti b zraq.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
-                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
-                            <span>01:38</span>
-                        </div>
-                        <p class="text-gray-300">Mzian Soufiane. Ila dkholti, dir branchement l'clé USB dyal l'extraction chiffrée f l'serveur principal rack #4. W matnsach, kon rapide f l'wqt.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-gray-300 mb-1">
-                            <span class="font-bold">Ali Benchamssi (Agent Spécialisé)</span>
-                            <span>01:42</span>
-                        </div>
-                        <p class="text-gray-300">Ana kan-suivi l'intégrité dyal backup men hna. Mli Soufiane y-bda l'copie, radi tban liya l'vitesse dyal transfer f ecran dyali. Kolchi stable l'an.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
-                            <span class="font-bold">Wissal Asbahi (Analyste Junior)</span>
-                            <span>01:45</span>
-                        </div>
-                        <p class="text-gray-300">Khouti, kayn wahed l'alerte jdida f SIEM! Chi wahed kay-tenta y-dir scan 3la les ports dyalna mn barra. Wach n-bloqui l'subnet kamlo wla ghir l'IP?</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-blue-400 mb-1">
-                            <span class="font-bold">Anis Salmi (Opérateur Senior)</span>
-                            <span>01:48</span>
-                        </div>
-                        <p class="text-gray-300">La la mat-bloquich l'subnet kaml, rah fih des clients legitimes. Bloqui ghir l'IP li 3ndha l'signature qbiha. W dir drop l'icmp packets bach may-dirouch ping sweep.</p>
-                    </div>
-
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <div class="flex justify-between text-xs text-cyan-400 mb-1">
-                            <span class="font-bold">Saber Aballagh (Chef de Brigade)</span>
-                            <span>01:52</span>
-                        </div>
-                        <p class="text-gray-300">Aya bslama, l'umur mzyana. Kol wahed y-bqa f poste dyalo. Mohamed vient d'être validé pour le 1er Novembre, l'équipe sera au complet. En attendant, on garde le rythme. Fin de transmission.</p>
-                    </div>
-
                 </div>
 
-                <!-- Zone de saisie désactivée pour Mohamed -->
+                <div class="flex-1 overflow-y-auto space-y-3 pr-3 text-sm font-mono" id="chat-stream">
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 chat-msg">
+                        <div class="flex justify-between text-xs text-cyan-400 mb-1"><span class="font-bold">Saber Aballagh (Chef de Brigade)</span><span>01:15</span></div>
+                        <p class="text-gray-300">Equipe, salam 3likoum. Wesh kolchi wajed l'opération dyal lila?</p>
+                    </div>
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 chat-msg">
+                        <div class="flex justify-between text-xs text-blue-400 mb-1"><span class="font-bold">Anis Salmi (Opérateur Senior)</span><span>01:18</span></div>
+                        <p class="text-gray-300">Wa alaykoum assalam Chef. Kolchi f control mn jihat les serveurs et le pare-feu.</p>
+                    </div>
+                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 chat-msg">
+                        <div class="flex justify-between text-xs text-purple-400 mb-1"><span class="font-bold">Chaimaa Benzakri (Analyste Cybersécurité)</span><span>01:22</span></div>
+                        <p class="text-gray-300">Ana f sandbox kan-dir l'analyse dyal dak l'payload. Mohamed vient d'être validé pour le 1er Novembre.</p>
+                    </div>
+                </div>
+
                 <div class="mt-4 pt-4 border-t border-gray-800 flex gap-2">
                     <input type="text" disabled placeholder="Transmission interdite - Affectation en attente (01/11/2026)..." class="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed">
                     <button disabled class="bg-gray-800 text-gray-600 px-6 py-2.5 rounded-lg font-bold text-sm cursor-not-allowed">Envoyer</button>
                 </div>
+            </div>
+        </div>
 
+        <!-- CLI TERMINAL INTERACTIF -->
+        <div id="cli-container" class="glass-panel p-4 rounded-2xl border border-gray-800 font-mono text-xs">
+            <div class="flex items-center justify-between pb-2 mb-2 border-b border-gray-800">
+                <span class="text-cyan-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    CONSOLE TACTIQUE B8 v4.2
+                </span>
+                <span class="text-gray-500">Tapez 'help' pour la liste des commandes</span>
+            </div>
+            <div id="cli-output" class="h-20 overflow-y-auto space-y-1 text-gray-300 mb-2">
+                <div class="text-gray-500">> Système initialisé. Session sécurisée active.</div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-cyan-400 font-bold">></span>
+                <input type="text" id="cli-input" onkeydown="handleCli(event)" placeholder="Entrer une commande..." class="w-full bg-transparent border-none text-white focus:outline-none font-mono">
             </div>
         </div>
 
@@ -655,43 +513,93 @@
                 </div>
                 <div>
                     <span class="text-gray-400 block mb-1 font-semibold">Mission & Responsabilités :</span>
-                    <p id="modal-mission" class="text-gray-300 bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs leading-relaxed">Description de la mission...</p>
+                    <p id="modal-mission" class="text-gray-300 bg-gray-900/60 p-3 rounded-lg border border-gray-800 text-xs leading-relaxed">Description...</p>
                 </div>
             </div>
             <button onclick="closeAgentModal()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-2 rounded-lg transition-all shadow-lg">Fermer le dossier</button>
         </div>
     </div>
 
+    <!-- Modal Détails Contact Social -->
+    <div id="social-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-yellow-500/50 relative shadow-2xl space-y-4">
+            <button onclick="closeSocialModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
+            <div class="flex items-center gap-3">
+                <div id="social-modal-badge" class="px-3 py-1 rounded text-xs font-mono font-bold">STATUT</div>
+                <h3 id="social-modal-name" class="text-xl font-bold text-white">Nom Contact</h3>
+            </div>
+            <div class="space-y-2 text-xs font-mono text-gray-300">
+                <p><strong class="text-gray-400">Motif de classification :</strong> <span id="social-modal-reason" class="text-yellow-400">...</span></p>
+                <div class="bg-gray-900 p-3 rounded border border-gray-800" id="social-modal-details">
+                    Détails du profil de sécurité...
+                </div>
+            </div>
+            <button onclick="closeSocialModal()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-semibold py-2 rounded-lg transition-all">Fermer la fiche</button>
+        </div>
+    </div>
+
     <script>
-        // Gestion des onglets
-        function switchTab(tabId) {
-            document.getElementById('tab-dashboard').classList.add('hidden');
-            document.getElementById('tab-brigade').classList.add('hidden');
-            document.getElementById('tab-social').classList.add('hidden');
-            document.getElementById('tab-comms').classList.add('hidden');
-
-            document.getElementById('tab-btn-dashboard').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-brigade').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-social').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
-            document.getElementById('tab-btn-comms').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white border-l border-gray-700";
-
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            
-            let activeBtnClass = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
-            if(tabId === 'comms') activeBtnClass += " border-l border-gray-700";
-            
-            document.getElementById('tab-btn-' + tabId).className = activeBtnClass;
-            
-            localStorage.setItem('activeBrigadeTab', tabId);
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBeep(freq = 800, type = 'sine', duration = 0.08) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
         }
 
-        // Restauration de l'onglet actif au chargement
         document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Intelligence', 'Réflexion', 'Analyse', 'Social', 'Famille', 'Gestion Stress'],
+                    datasets: [{
+                        label: 'Mohamed Najhi',
+                        data: [88, 82, 91, 78, 85, 88],
+                        backgroundColor: 'rgba(34, 211, 238, 0.2)',
+                        borderColor: 'rgba(34, 211, 238, 1)',
+                        pointBackgroundColor: 'rgba(34, 211, 238, 1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#9ca3af', font: { size: 10 } },
+                            ticks: { display: false, max: 100 }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
             const savedTab = localStorage.getItem('activeBrigadeTab') || 'dashboard';
             switchTab(savedTab);
         });
 
-        // Horloge en temps réel
+        function switchTab(tabId) {
+            playBeep(900);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-buttons button').forEach(btn => {
+                btn.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white";
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-btn-' + tabId).className = "px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md";
+            localStorage.setItem('activeBrigadeTab', tabId);
+        }
+
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').textContent = now.toLocaleTimeString('fr-FR') + ' | ' + now.toLocaleDateString('fr-FR');
@@ -699,58 +607,40 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Compte à rebours mis à jour vers le 1er Novembre 2026 (Prise de fonction)
         function updateCountdown() {
             const targetDate = new Date('2026-11-01T08:00:00').getTime();
-            const now = new Date().getTime();
-            const distance = targetDate - now;
-
+            const distance = targetDate - new Date().getTime();
             if (distance < 0) {
                 document.getElementById('countdown').innerHTML = "<span class='text-green-400 font-bold'>DÉPLOIEMENT ACTIF</span>";
                 return;
             }
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById('days').textContent = String(days).padStart(2, '0');
-            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            document.getElementById('days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            document.getElementById('hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
         }
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Recherche interactive agents
         function filterAgents() {
             let input = document.getElementById('agent-search').value.toLowerCase();
             let cards = document.getElementsByClassName('agent-card');
-
             for (let i = 0; i < cards.length; i++) {
                 let name = cards[i].getElementsByClassName('agent-name')[0].textContent.toLowerCase();
                 cards[i].style.display = name.includes(input) ? "flex" : "none";
             }
         }
 
-        // Mode Alerte Rouge
-        function toggleRedAlert() {
-            const body = document.getElementById('app-body');
-            const btn = document.getElementById('alert-btn');
-            body.classList.toggle('red-alert-mode');
-            
-            if (body.classList.contains('red-alert-mode')) {
-                btn.textContent = "🛡️ MODE NORMAL";
-                btn.className = "bg-cyan-950 hover:bg-cyan-900 text-cyan-400 border border-cyan-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
-            } else {
-                btn.textContent = "🚨 MODE ALERTE";
-                btn.className = "bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md";
-            }
+        function filterSocial(category) {
+            playBeep(750);
+            const cards = document.querySelectorAll('.social-card');
+            cards.forEach(card => {
+                card.style.display = (category === 'ALL' || card.classList.contains(category)) ? 'flex' : 'none';
+            });
         }
 
-        // Modale des agents
         function openAgentModal(name, role, level, spec, mission) {
+            playBeep(1000);
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-role').textContent = role;
             document.getElementById('modal-level').textContent = level;
@@ -758,19 +648,53 @@
             document.getElementById('modal-mission').textContent = mission;
             document.getElementById('agent-modal').classList.remove('hidden');
         }
+        function closeAgentModal() { document.getElementById('agent-modal').classList.add('hidden'); }
 
-        function closeAgentModal() {
-            document.getElementById('agent-modal').classList.add('hidden');
+        function openSocialModal(name, status, reason, details) {
+            playBeep(650);
+            document.getElementById('social-modal-name').textContent = name;
+            document.getElementById('social-modal-reason').textContent = reason;
+            document.getElementById('social-modal-details').textContent = details;
+            const badge = document.getElementById('social-modal-badge');
+            badge.textContent = status;
+            badge.className = status === 'ROUGE' ? 'px-3 py-1 rounded text-xs font-mono font-bold bg-red-950 text-red-400 border border-red-800' : 'px-3 py-1 rounded text-xs font-mono font-bold bg-orange-950 text-orange-400 border border-orange-800';
+            document.getElementById('social-modal').classList.remove('hidden');
         }
+        function closeSocialModal() { document.getElementById('social-modal').classList.add('hidden'); }
 
-        // Service Worker PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then((reg) => console.log('Service Worker enregistré avec succès:', reg.scope))
-                    .catch((err) => console.log('Échec de l\'enregistrement du Service Worker:', err));
+        function searchChat() {
+            const query = document.getElementById('chat-search').value.toLowerCase();
+            document.querySelectorAll('.chat-msg').forEach(msg => {
+                msg.style.display = msg.textContent.toLowerCase().includes(query) ? 'block' : 'none';
             });
         }
+
+        function handleCli(e) {
+            if (e.key === 'Enter') {
+                playBeep(1200);
+                const input = document.getElementById('cli-input');
+                const output = document.getElementById('cli-output');
+                const cmd = input.value.trim().toLowerCase();
+                
+                let res = '';
+                if (cmd === 'help') res = "Commandes : status, scan, report, clear";
+                else if (cmd === 'status') res = "Système Opérationnel. Habilitation Mohamed Najhi : Validée le 01/11/2026.";
+                else if (cmd === 'scan') res = "Analyse périmétrique : 0 menace détectée sur le réseau interne.";
+                else if (cmd === 'report') res = "Score Cognitif : 87% | Score Comportemental : 84%. Embauche définitive.";
+                else if (cmd === 'clear') { output.innerHTML = ''; input.value = ''; return; }
+                else res = "Commande inconnue. Tapez 'help'.";
+
+                output.innerHTML += `<div><span class="text-cyan-400">> ${input.value}</span></div><div class="text-gray-400">${res}</div>`;
+                output.scrollTop = output.scrollHeight;
+                input.value = '';
+            }
+        }
+
+        function toggleRedAlert() {
+            playBeep(400, 'sawtooth', 0.2);
+            document.getElementById('app-body').classList.toggle('red-alert-mode');
+        }
+        function exportPDF() { window.print(); }
     </script>
 </body>
 </html>
