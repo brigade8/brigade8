@@ -31,7 +31,7 @@
         .progress-bar { animation: progress 1.5s ease-out forwards; }
 
         @media print {
-            header, button, #cli-container, .tab-buttons, #tab-brigade, #tab-social, #tab-caisse, #tab-missions, #tab-comms { display: none !important; }
+            header, button, #cli-container, .tab-buttons, #tab-brigade, #tab-social, #tab-caisse, #tab-missions, #tab-software, #tab-comms { display: none !important; }
             body { background: white !important; color: black !important; }
             .glass-panel { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; }
             .text-white, .text-gray-200, .text-gray-300, .text-cyan-400 { color: black !important; }
@@ -54,9 +54,10 @@
         </div>
 
         <div class="flex items-center bg-gray-900/90 p-1 rounded-xl border border-gray-800 flex-wrap gap-1 tab-buttons">
-            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
+            <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-cyan-600 text-white shadow-md">Dashboard</button>
             <button onclick="switchTab('brigade')" id="tab-btn-brigade" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Effectif</button>
             <button onclick="switchTab('social')" id="tab-btn-social" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Cercle Social</button>
+            <button onclick="switchTab('software')" id="tab-btn-software" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Matériel Software</button>
             <button onclick="switchTab('caisse')" id="tab-btn-caisse" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-white">Caisse</button>
             <button onclick="switchTab('missions')" id="tab-btn-missions" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-gray-400 hover:text-cyan-400 flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> Missions Terrain
@@ -100,17 +101,17 @@
                 </div>
 
                 <!-- NOTIFICATION D'ASSURANCE -->
-                <div class="w-full bg-amber-950/40 border border-amber-500/50 rounded-xl p-3.5 text-left space-y-2">
-                    <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        <span>Notification d'Assurance</span>
+                <div class="w-full bg-emerald-950/40 border border-emerald-500/50 rounded-xl p-3.5 text-left space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Assurance Annuelle : Réglée</span>
                     </div>
                     <p class="text-xs text-gray-300 leading-relaxed">
-                        L'agent <strong class="text-white">Mohamed Najhi</strong> doit régler l'assurance annuelle sur les risques.
+                        L'agent <strong class="text-white">Mohamed Najhi</strong> a payé son assurance. Il est officiellement <strong class="text-emerald-400">assuré</strong>.
                     </p>
-                    <div class="flex justify-between items-center pt-2 border-t border-amber-500/20 text-xs font-mono">
-                        <span class="text-gray-400">Montant dû :</span>
-                        <span class="text-amber-400 font-bold text-sm">352 MAD / an</span>
+                    <div class="flex justify-between items-center pt-2 border-t border-emerald-500/20 text-xs font-mono">
+                        <span class="text-gray-400">Statut :</span>
+                        <span class="text-emerald-400 font-bold text-sm">PAYÉ (352 MAD)</span>
                     </div>
                 </div>
 
@@ -449,6 +450,84 @@
                     <div onclick="openSocialModal('Ayoub Aloui', 'VERT', 'Zone Sûre', 'Membre certifié et audité.')" class="social-card VERT bg-emerald-950/30 border border-emerald-500/40 p-3.5 rounded-xl flex justify-between items-center cursor-pointer hover:bg-emerald-900/40">
                         <span class="text-white font-medium">Ayoub Aloui</span>
                         <span class="bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold px-2.5 py-1 rounded-full border border-emerald-500/40">VERT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= NOUVEL ONGLET : MATÉRIEL SOFTWARE ================= -->
+        <div id="tab-software" class="hidden space-y-6 tab-content">
+            <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 relative overflow-hidden bg-cyan-950/20">
+                <div class="absolute top-0 right-0 bg-cyan-600/30 text-cyan-300 text-xs font-bold px-3 py-1 rounded-bl-lg">ACQUISITION OBLIGATOIRE</div>
+                <h3 class="text-lg font-bold text-cyan-400 mb-2">LOGICIELS D'AIDE À L'ACTIVITÉ - AGENT MOHAMED NAJHI</h3>
+                <p class="text-gray-300 text-sm mb-4">Dans le cadre de ses fonctions d'opérateur cyber-tactique, l'agent doit se procurer et installer la suite logicielle opérationnelle ci-dessous pour sécuriser et optimiser ses analyses sur le terrain.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-gray-900/80 p-4 rounded-xl border border-cyan-500/30">
+                        <span class="text-xs text-gray-400 block font-mono">BUDGET TOTAL LOGICIELS</span>
+                        <span class="text-2xl font-bold text-cyan-400 font-mono">870 MAD <span class="text-xs text-gray-500 font-normal">(3 Licences)</span></span>
+                    </div>
+                    <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700">
+                        <span class="text-xs text-gray-400 block font-mono">STATUT DES ACQUISITIONS</span>
+                        <span class="text-xs text-green-400 block mt-1 font-bold">🟢 Prêt pour déploiement sur terminal Z Book</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grille des 3 logiciels -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Logiciel 1 -->
+                <div class="glass-panel p-6 rounded-2xl border border-cyan-500/30 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-mono bg-cyan-500/20 text-cyan-300 px-2.5 py-1 rounded border border-cyan-500/30 font-bold">LICENCE PRO</span>
+                            <span class="text-cyan-400 font-bold font-mono text-lg">250 MAD</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white mb-2">CyberShield VPN Pro</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Logiciel de tunnelisation chiffrée de bout en bout. Permet à l'agent de masquer son adresse IP réelle, de contourner les restrictions régionales lors des enquêtes numériques et de sécuriser ses connexions sur les réseaux Wi-Fi publics non sécurisés.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs font-mono text-gray-400">
+                        <span>Plateforme : Windows / Linux</span>
+                        <span class="text-green-400 font-bold">ACQUIS & INSTALLÉ</span>
+                    </div>
+                </div>
+
+                <!-- Logiciel 2 -->
+                <div class="glass-panel p-6 rounded-2xl border border-blue-500/30 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-mono bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded border border-blue-500/30 font-bold">LICENCE PRO</span>
+                            <span class="text-blue-400 font-bold font-mono text-lg">310 MAD</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white mb-2">NetTrace Packet Analyzer</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Outil d'analyseur de trafic réseau et d'interception de paquets en temps réel. Indispensable pour auditer les passerelles suspectes, inspecter la structure des flux de données et détecter rapidement les anomalies de connexion sur le terrain.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs font-mono text-gray-400">
+                        <span>Plateforme : Multiplateforme</span>
+                        <span class="text-green-400 font-bold">ACQUIS & INSTALLÉ</span>
+                    </div>
+                </div>
+
+                <!-- Logiciel 3 -->
+                <div class="glass-panel p-6 rounded-2xl border border-purple-500/30 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="text-xs font-mono bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded border border-purple-500/30 font-bold">LICENCE PRO</span>
+                            <span class="text-purple-400 font-bold font-mono text-lg">310 MAD</span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white mb-2">CryptVault Password Manager</h4>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Coffre-fort numérique ultra-sécurisé basé sur un chiffrement de niveau militaire AES-256. Permet de stocker, générer et synchroniser les mots de passe complexes et les clés d'accès cryptographiques nécessaires aux différentes opérations tactiques.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-gray-800 flex items-center justify-between text-xs font-mono text-gray-400">
+                        <span>Plateforme : Sécurisé Local/Cloud</span>
+                        <span class="text-green-400 font-bold">ACQUIS & INSTALLÉ</span>
                     </div>
                 </div>
             </div>
@@ -878,7 +957,7 @@
                 
                 let res = '';
                 if (cmd === 'help') res = "Commandes : status, scan, report, clear";
-                else if (cmd === 'status') res = "Système Opérationnel. Habilitation Mohamed Najhi : Validée le 01/11/2026.";
+                else if (cmd === 'status') res = "Système Opérationnel. Habilitation Mohamed Najhi : Validée. Assurance : Payée. Logiciels : 3 / 3 installés.";
                 else if (cmd === 'scan') res = "Analyse périmétrique : 0 menace détectée sur le réseau interne.";
                 else if (cmd === 'report') res = "Score Cognitif : 87% | Score Comportemental : 84%. Embauche définitive.";
                 else if (cmd === 'clear') { output.innerHTML = ''; input.value = ''; return; }
