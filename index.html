@@ -71,7 +71,7 @@
                 PDF
             </button>
             <button onclick="toggleRedAlert()" id="alert-btn" class="bg-red-950 hover:bg-red-900 text-red-400 border border-red-600/50 px-3 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all shadow-md">
-                🚨 MODE ALERTE
+                 MODE ALERTE
             </button>
             <div class="text-sm text-gray-300 font-mono bg-gray-900/80 px-3 py-1.5 rounded-md border border-gray-700 shadow-inner" id="clock"></div>
         </div>
@@ -142,7 +142,7 @@
                             <span class="absolute text-sm font-bold font-mono text-yellow-400">35%</span>
                         </div>
                         <div class="text-left text-xs font-mono space-y-1">
-                            <span class="block text-green-400 font-bold">🟢 Éléments sous contrôle</span>
+                            <span class="block text-green-400 font-bold"> Éléments sous contrôle</span>
                             <span class="block text-gray-400">Seuil critique : 80%</span>
                         </div>
                     </div>
@@ -470,7 +470,7 @@
                     </div>
                     <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700">
                         <span class="text-xs text-gray-400 block font-mono">STATUT DES ACQUISITIONS</span>
-                        <span class="text-xs text-green-400 block mt-1 font-bold">🟢 Prêt pour déploiement sur terminal Z Book</span>
+                        <span class="text-xs text-green-400 block mt-1 font-bold"> Prêt pour déploiement sur terminal Z Book</span>
                     </div>
                 </div>
             </div>
@@ -948,6 +948,17 @@
             });
         }
 
+        function generateTacticalPassword(length = 16) {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*+-=';
+            const array = new Uint32Array(length);
+            crypto.getRandomValues(array);
+            let pass = '';
+            for (let i = 0; i < length; i++) {
+                pass += chars[array[i] % chars.length];
+            }
+            return pass;
+        }
+
         function handleCli(e) {
             if (e.key === 'Enter') {
                 playBeep(1200);
@@ -956,10 +967,11 @@
                 const cmd = input.value.trim().toLowerCase();
                 
                 let res = '';
-                if (cmd === 'help') res = "Commandes : status, scan, report, clear";
+                if (cmd === 'help') res = "Commandes : status, scan, report, pass, clear";
                 else if (cmd === 'status') res = "Système Opérationnel. Habilitation Mohamed Najhi : Validée. Assurance : Payée. Logiciels : 3 / 3 installés.";
                 else if (cmd === 'scan') res = "Analyse périmétrique : 0 menace détectée sur le réseau interne.";
                 else if (cmd === 'report') res = "Score Cognitif : 87% | Score Comportemental : 84%. Embauche définitive.";
+                else if (cmd === 'pass') res = `Nouveau mot de passe : ${generateTacticalPassword()} | Validité : 5 heures.`;
                 else if (cmd === 'clear') { output.innerHTML = ''; input.value = ''; return; }
                 else res = "Commande inconnue. Tapez 'help'.";
 
