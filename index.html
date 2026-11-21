@@ -91,6 +91,28 @@
         <!-- ================= ONGLET 1 : DASHBOARD PRINCIPAL ================= -->
         <div id="tab-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6 tab-content">
 
+            <!-- ALERTE MISSIONS BLOQUÉES / RISQUE DE TRANSFERT (MOHAMED NAJHI) -->
+            <div class="glass-panel p-5 rounded-2xl md:col-span-3 border border-red-500/50 bg-red-950/25 alert-pulse flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 text-red-400 font-bold text-xs uppercase font-mono">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                        <span>Alerte Opérationnelle — Agent Mohamed Najhi</span>
+                    </div>
+                    <p class="text-sm text-gray-200 leading-relaxed">
+                        L'agent <strong class="text-white">Mohamed Najhi</strong> a <strong class="text-red-400">2 missions non encore commencées</strong> à cause d'<strong class="text-red-300">incapacité d'outils de travail</strong> : il lui manque <strong class="text-yellow-400">Malwarebytes Standard</strong>. Il y a un <strong class="text-red-400">risque de transmettre les missions à un autre agent</strong>.
+                    </p>
+                </div>
+                <div class="shrink-0 bg-gray-950/80 border border-red-500/40 rounded-xl px-4 py-3 text-center lg:text-right">
+                    <span class="text-[11px] font-mono uppercase text-red-300 block">Échéance avant transfert (22/11/2026 à 07h00)</span>
+                    <div id="mission-transfer-countdown" class="flex justify-center lg:justify-end gap-2 font-mono text-white text-sm mt-1.5">
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-red-500/30"><span id="mt-days">00</span>j</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-red-500/30"><span id="mt-hours">00</span>h</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-red-500/30"><span id="mt-minutes">00</span>m</div>
+                        <div class="bg-gray-900 px-2.5 py-1 rounded border border-red-500/30"><span id="mt-seconds">00</span>s</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Colonne Gauche : Profil -->
             <div class="glass-panel p-6 rounded-2xl md:col-span-1 flex flex-col items-center text-center h-fit space-y-4">
                 <div class="relative">
@@ -1046,6 +1068,23 @@
         }
         setInterval(updateCountdown, 1000);
         updateCountdown();
+
+        function updateMissionTransferCountdown() {
+            const transferTarget = new Date('2026-11-22T07:00:00').getTime();
+            const distance = transferTarget - new Date().getTime();
+            const el = document.getElementById('mission-transfer-countdown');
+            if (!el) return;
+            if (distance <= 0) {
+                el.innerHTML = "<span class='text-red-400 font-bold'>DÉLAI EXPIRÉ — TRANSFERT EN COURS</span>";
+                return;
+            }
+            document.getElementById('mt-days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            document.getElementById('mt-hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+            document.getElementById('mt-minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            document.getElementById('mt-seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+        }
+        setInterval(updateMissionTransferCountdown, 1000);
+        updateMissionTransferCountdown();
 
         function filterAgents() {
             let input = document.getElementById('agent-search').value.toLowerCase();
