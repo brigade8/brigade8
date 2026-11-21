@@ -370,9 +370,24 @@
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" id="agents-grid">
-                    <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade', 'Niveau 16', 'Commandement tactique global & Stratégie', 'Supervision générale des opérations de la Brigade 8.')" class="agent-card bg-gray-900/70 border border-cyan-500/40 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-cyan-950/40 transition-all">
-                        <div><span class="text-white font-bold agent-name block">Saber Aballagh</span><span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span></div>
-                        <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">Niv. 16</span>
+                    <div onclick="openAgentModal('Saber Aballagh', 'Chef de Brigade • En repos', 'Niveau 13 (-3)', 'Commandement tactique global & Stratégie', 'Actuellement en repos. Yazan Marni assure l’intérim à la tête de la Brigade 8.')" class="agent-card bg-amber-950/20 border border-amber-500/40 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-amber-950/40 transition-all">
+                        <div>
+                            <span class="text-white font-bold agent-name block">Saber Aballagh</span>
+                            <span class="text-xs text-cyan-400 font-mono">Chef de Brigade</span>
+                            <span class="inline-block mt-1 bg-amber-500/20 text-amber-300 text-[10px] font-mono font-bold px-2 py-0.5 rounded border border-amber-500/30">EN REPOS</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">Niv. 13</span>
+                            <span class="bg-red-500/20 text-red-400 text-xs font-mono font-bold px-1.5 py-0.5 rounded-full border border-red-500/40">-3</span>
+                        </div>
+                    </div>
+
+                    <div onclick="openAgentModal('Yazan Marni', 'Chef de brigade par intérim', 'Niveau 12', 'Commandement intérimaire & Coordination opérationnelle', 'Assure la direction et la supervision de la Brigade 8 par intérim pendant le repos de Saber Aballagh.')" class="agent-card bg-cyan-950/30 border border-cyan-400/50 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-cyan-900/40 transition-all">
+                        <div>
+                            <span class="text-white font-bold agent-name block">Yazan Marni</span>
+                            <span class="text-xs text-cyan-300 font-mono font-bold">Chef de brigade par intérim</span>
+                        </div>
+                        <span class="bg-cyan-500/20 text-cyan-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-cyan-500/30">Niv. 12</span>
                     </div>
 
                     <div onclick="openAgentModal('Anis Salmi', 'Opérateur Senior', 'Niveau 11', 'Analyse Réseau & Sécurité Périmétrique', 'Audit des passerelles réseau.')" class="agent-card bg-gray-900/50 border border-gray-700 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
@@ -410,9 +425,9 @@
                         <span class="bg-gray-700 text-gray-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-gray-600">Niv. 08</span>
                     </div>
 
-                    <div onclick="openAgentModal('Mohamed Najhi', 'Opérateur Cyber-Tactique', 'Niveau 10', 'Cellule CMT', 'Prise de fonction le 01/11/2026.')" class="agent-card bg-gray-900/50 border border-green-500/40 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
+                    <div onclick="openAgentModal('Mohamed Najhi', 'Opérateur Cyber-Tactique', 'Niveau 08', 'Cellule CMT', 'Prise de fonction le 01/11/2026.')" class="agent-card bg-gray-900/50 border border-green-500/40 p-3 rounded-xl flex justify-between items-center cursor-pointer hover:bg-gray-800 transition-all">
                         <div><span class="text-white font-bold agent-name block">Mohamed Najhi</span><span class="text-xs text-green-400">Opérateur Cyber-Tactique</span></div>
-                        <span class="bg-green-500/20 text-green-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-green-500/30">Niv. 10</span>
+                        <span class="bg-green-500/20 text-green-300 text-xs font-mono font-bold px-2 py-0.5 rounded-full border border-green-500/30">Niv. 08</span>
                     </div>
                 </div>
             </div>
@@ -870,15 +885,15 @@
             <button onclick="closeReadyPopup()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">&times;</button>
             <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-wider border-b border-gray-800 pb-2">VÉRIFICATION SYSTÈME (READY)</h3>
             <div class="space-y-1.5 text-gray-200 leading-relaxed">
-                <div>Contrat &gt;&gt;&gt;&gt;&gt; done ✅️</div>
-                <div>Caisse &gt;&gt;&gt;&gt;&gt;&gt; done ✅️</div>
-                <div>Assurance &gt;&gt;&gt; done ✅️</div>
-                <div>CyberShield VPN Pro &gt;&gt;&gt;&gt; done ✅️</div>
-                <div>NetTrace Packet Analyzer &gt;&gt;&gt; done ✅️</div>
-                <div>CryptVault Password Manager &gt;&gt;&gt; done ✅️</div>
-                <div>Extensions &gt;&gt;&gt; done ✅️</div>
-                <div>Mode développeur &gt;&gt;&gt; done ✅️</div>
-                <div>Malwarebytes Standard &gt;&gt;&gt; required ❌️ pour votre version ios nécessaire Malwarebytes Standard</div>
+                <div>Contrat &gt;&gt;&gt;&gt;&gt; done </div>
+                <div>Caisse &gt;&gt;&gt;&gt;&gt;&gt; done </div>
+                <div>Assurance &gt;&gt;&gt; done </div>
+                <div>CyberShield VPN Pro &gt;&gt;&gt;&gt; done </div>
+                <div>NetTrace Packet Analyzer &gt;&gt;&gt; done </div>
+                <div>CryptVault Password Manager &gt;&gt;&gt; done </div>
+                <div>Extensions &gt;&gt;&gt; done </div>
+                <div>Mode développeur &gt;&gt;&gt; done </div>
+                <div>Malwarebytes Standard &gt;&gt;&gt; required  pour votre version ios nécessaire Malwarebytes Standard</div>
             </div>
             <div class="pt-2">
                 <a href="https://store.malwarebytes.com/342/purl-privacy-www?quantity=3&x-src=site-WWW_ctry-MA_os-android_flow-fr.homepage%7Efr.vpn_promo-_referrer-https%253A%252F%252Fwww.google.com%252F&language=fr&x-gad_source=1&x-gad_campaignid=23790377492&x-gclid=Cj0KCQiA_P_XBhDvARIsALHjSUVaDzqxDi1tppyYtGTkidmr0i_jYPM-XXneFq1Nh_mHjIkyjLDMhj8aAs3mEALw_wcB&x-_gl=1*1vdkml*_up*MQ..*_gs*MQ..&x-referrer=https%253A%252F%252Fwww.google.com%252F&x-sign=0&x-c=1.1&_gl=1*1frhx1k*_gcl_aw*R0NMLjE3OTUyMTMxMjEuQ2owS0NRaUFfUF9YQmhEdkFSSXNBTEhqU1VWYUR6cXhEaTF0cHB5WXRHVGtpZG1yMGlfallQTS1YWG5lRnExTmhfbUhqSWt5akxETWhqOGFBczNtRUFMd193Y0I.*_gcl_au*MTk2MjY0NTA4Ny4xNzk1MjEzMTA2*_up*MQ..*_gs*MQ..*_ga*MjAyMjgxMDY0LjE3OTUyMTMxMDY.*_ga_K8KCHE3KSC*czE3OTUyMTMxMDUkbzEkZzEkdDE3OTUyMTMxMjAkajQ1JGwxJGg0OTc3OTUxMzM.&gclid=Cj0KCQiA_P_XBhDvARIsALHjSUVaDzqxDi1tppyYtGTkidmr0i_jYPM-XXneFq1Nh_mHjIkyjLDMhj8aAs3mEALw_wcB" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 px-4 rounded-lg border border-red-400/50 transition-all shadow-lg">Malwarebytes Standard</a>
